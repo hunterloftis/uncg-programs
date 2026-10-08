@@ -62,12 +62,16 @@ function addMark(key, node, entry, residual = false) {
 }
 
 for (const extreme of extremes) {
-  const label = element('span');
+  const item = element('div', 'legend-item');
+  const label = element('dt');
   const swatch = element('span', `extreme-key ${extreme.field === 'q3' ? 'ceiling' : 'floor'}`);
   swatch.style.setProperty('--edge-color', extreme.color);
   swatch.setAttribute('aria-hidden', 'true');
   label.append(swatch, `${extreme.label} ${money(extreme.value)}`);
-  root.querySelector('.extreme-legend').append(label);
+  const percentile = extreme.field === 'q1' ? '25th' : '75th';
+  const limit = extreme.label.startsWith('Lowest') ? 'minimum' : 'maximum';
+  item.append(label, element('dd', '', `${extreme.label.split(' ')[0]} ${percentile} percentile across UNCG boxes, not ${limit} individual earnings. Excludes high school and pooled medians.`));
+  root.querySelector('.extreme-legend').append(item);
 }
 
 const heightKey = root.querySelector('.height-key');
@@ -80,10 +84,10 @@ for (const [index, sampleCount] of [20, 100, 300].entries()) {
 }
 for (const entry of observations) {
   const reference = entry.kind === 'reference';
-  const field = fields.get(entry.cip.slice(0, 2));
+  const field = reference ? entry : fields.get(entry.cip.slice(0, 2));
   const available = reference || hasBox(entry);
   const boxHeight = reference ? 22 : available ? entry.earningsCount * heightScale : 0;
-  const residualHeight = hasBox(entry) && Number.isFinite(field?.residualCount) && field.observedCount > 0
+  const residualHeight = (reference || hasBox(entry)) && Number.isFinite(field?.residualCount) && field.observedCount > 0
     ? boxHeight * (field.residualCount / field.observedCount)
     : null;
   const row = element('div', 'chart-row');
@@ -130,8 +134,10 @@ for (const entry of observations) {
     box.style.left = `${position(0)}%`;
     box.style.width = `${position(entry.q1) - position(0)}%`;
     box.style.setProperty('--box-height', `${residualHeight}px`);
-    box.style.setProperty('--box-color', 'var(--residual)');
-    box.setAttribute('aria-label', `${entry.label}: shared UNCG field CIP ${field.cip}, ${field.label}. ${count(field.residualCount)} graduates with no observed or marginal employment and ${count(field.observedCount)} employed graduates. Purple-to-blue height ratio uses these field counts, not counts for this individual major. The horizontal span does not represent earnings.`);
+    box.style.setProperty('--box-color', reference ? 'var(--hs-residual)' : 'var(--residual)');
+    box.setAttribute('aria-label', reference
+      ? `${entry.label}: ACS estimates of ${count(entry.residualCount)} people with annual earnings below ${money(entry.minimumEarnings)} and ${count(entry.observedCount)} at or above the cutoff, in ${entry.dollarsYear} dollars. Purple height relative to the fixed earnings box uses these weighted population estimates. The horizontal span does not represent earnings.`
+      : `${entry.label}: shared UNCG field CIP ${field.cip}, ${field.label}. ${count(field.residualCount)} graduates with no observed or marginal employment and ${count(field.observedCount)} employed graduates. Purple-to-blue height ratio uses these field counts, not counts for this individual major. The horizontal span does not represent earnings.`);
     const fill = element('span', 'box-fill');
     fill.setAttribute('aria-hidden', 'true');
     box.append(fill);
@@ -173,6 +179,18 @@ for (const [entries, selector, counts] of [
   }
 }
 
+for (const entry of earningsData.references) {
+  const row = element('tr');
+  const name = element('th', '', entry.label);
+  name.scope = 'row';
+  row.append(name);
+  for (const key of ['q1', 'median', 'q3']) row.append(element('td', 'text-end text-nowrap tabular-nums', money(entry[key])));
+  for (const key of ['observedCount', 'residualCount']) row.append(element('td', 'text-end tabular-nums', count(entry[key])));
+  row.append(element('td', 'text-end tabular-nums', residualShare(entry)));
+  row.append(element('td', 'text-end tabular-nums', count(entry.totalSampleCount)));
+  root.querySelector('.reference-table tbody').append(row);
+}
+
 function positionTooltip() {
   const active = marks.get(activeKey);
   if (!active) return;
@@ -197,7 +215,12 @@ function showEntry(key) {
   const { entry, residual } = active;
   const reference = entry.kind === 'reference';
   const fallback = entry.fallback;
-  const stats = residual ? [
+  const stats = residual && reference ? [
+    [`Below ${money(entry.minimumEarnings)}`, count(entry.residualCount)],
+    [`At or above ${money(entry.minimumEarnings)}`, count(entry.observedCount)],
+    ['Share below cutoff', residualShare(entry)],
+    ['Survey records (all)', count(entry.totalSampleCount)]
+  ] : residual ? [
     ['No observed / marginal employment', count(entry.residualCount)],
     ['Employed', count(entry.observedCount)],
     ['Residual share', residualShare(entry)]
@@ -207,16 +230,17 @@ function showEntry(key) {
       ['Median', money(entry.median)],
       ['75th percentile', money(entry.q3)]
     ]),
-    [reference ? 'Survey records' : 'Graduates in sample', count(reference ? entry.sampleCount : (fallback ?? entry).earningsCount)]
+    [reference ? 'Survey records (qualifying)' : 'Graduates in sample', count(reference ? entry.sampleCount : (fallback ?? entry).earningsCount)],
+    ...(reference ? [['Estimated people (qualifying)', count(entry.observedCount)]] : [])
   ];
   tooltip.querySelector('.tip-title').textContent = entry.label;
-  tooltip.querySelector('.tip-context').textContent = residual ? `Shared field · CIP ${entry.cip}`
-    : reference ? 'Ages 25–34 · employed, not enrolled'
+  tooltip.querySelector('.tip-context').textContent = reference ? `Ages 25–34 · not enrolled · ${residual ? 'ACS no/low earnings estimate' : `annual earnings ≥ ${money(entry.minimumEarnings)}`}`
+    : residual ? `Shared field · CIP ${entry.cip}`
     : `${fallback ? 'Pooled program group' : 'Program group'} · CIP ${entry.cip}`;
   const details = tooltip.querySelector('.tip-stats');
   details.replaceChildren();
   for (const [label, value] of stats) details.append(element('dt', '', label), element('dd', '', value));
-  tooltip.querySelector('.tip-source').textContent = reference ? 'Census ACS' : 'Census PSEO';
+  tooltip.querySelector('.tip-source').textContent = reference ? `Census ACS · ${entry.dollarsYear} dollars` : 'Census PSEO';
   tooltip.querySelector('.tip-period').textContent = reference ? `${entry.period} survey`
     : `${(fallback ?? earningsData).cohort} graduates · year ${earningsData.yearsAfterGraduation}`;
   positionTooltip();

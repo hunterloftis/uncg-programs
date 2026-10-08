@@ -12,6 +12,7 @@ Open `index.html` in a browser. Hover or focus a box or circle to see details; c
 - `data.js`: generated chart data. Missing values are `null`.
 - `data/`: source snapshots, degree names, field names, and high school estimates.
 - `prepare-data.py`: rebuilds `data.js` from those local files with Python's standard library. Run `python3 prepare-data.py` after a data change.
+- `prepare-high-school.py`: rebuilds `data/high-school.json` from the Census national ACS person ZIP with Python's standard library.
 
 ## Data
 
@@ -29,7 +30,22 @@ PSEO earnings cover graduates with positive covered earnings in at least three q
 
 The residual category means **no observed employment or marginal employment**, not unemployment. It includes graduates who do not meet the earnings-sample rules. PSEO protects counts and earnings with noise and suppresses some values. Earnings-file and employment-file counts can differ.
 
-High school: weighted quartiles from [2019–2023 ACS public microdata](https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/), in 2023 dollars. The sample includes civilian employed adults aged 25–34 with a high school diploma or GED, no school attendance, and positive earnings. These filters differ from PSEO. The page notes contain the full method and comparison limits.
+High school: weighted estimates from [2019–2023 ACS public microdata](https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/), in 2023 dollars. The base includes civilians aged 25–34 with only a regular high school diploma or GED and no school attendance in the last three months. It includes employed, unemployed, and out-of-labor-force adults. NC uses residents of North Carolina; the U.S. includes the 50 states and DC.
+
+Annual earnings are wages plus net self-employment earnings (`PERNP`), adjusted to 2023 dollars with `ADJINC / 1,000,000`. A fixed cutoff of **$15,080 in 2023 dollars** partitions the base: earnings at or above it qualify for the earnings box; earnings below it, including zero and negative earnings, form the purple group. Current employment status does not determine the group. The cutoff is 40 hours × 52 weeks × $7.25, a benchmark rather than evidence of full-time work.
+
+Each group's population estimate uses person weights (`PWGTP`). Quartiles use the qualifying group's weights and take the first earnings value where cumulative weight reaches 25%, 50%, or 75%; results are rounded to dollars. `sampleCount` is the qualifying survey record count; `totalSampleCount` is the full base record count. `observedCount` and `residualCount` are the qualifying and below-cutoff weighted population estimates; `populationEstimate` is their total. These are survey estimates, not graduation-cohort counts. Confidence intervals are not shown.
+
+**ACS no/low earnings is not the PSEO residual measure.** ACS lacks covered earnings by quarter, includes self-employment, and uses this fixed real-dollar cutoff rather than PSEO's year-specific earnings threshold. The populations and periods differ. These comparisons do not measure the causal effect of a degree.
+
+To rebuild, download [the national person ZIP](https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/csv_pus.zip) outside the repository, then run:
+
+```sh
+python3 prepare-high-school.py /path/to/csv_pus.zip
+python3 prepare-data.py
+```
+
+The script reads all four national person CSV parts and derives both geographic estimates from the same source.
 
 ## Rendering
 
@@ -37,9 +53,11 @@ Box edges show the 25th and 75th percentiles; the internal line shows the median
 
 Teal circles have fixed size. Their position is the pooled median; their area does not represent a count. Pooled quartiles are available in the source but are not drawn. Tooltips name the cohort and sample count. The program table uses a pooled median where available and labels it; other columns still describe the main cohort. The pooled earnings rules and nationwide coverage match the main PSEO data, but the periods differ.
 
-Purple boxes extend from $0 to the blue box's left edge. Purple height equals blue height multiplied by the broad-field residual count divided by its employed count. If half the field is in the residual category, these counts are equal and the boxes have equal heights. Purple width and area do not represent an earnings range or a count.
+Purple boxes extend from $0 to the earnings box's left edge. UNCG purple height equals blue height multiplied by the broad-field residual count divided by its employed count. If half the field is in the residual category, these counts are equal and the boxes have equal heights. Purple width and area do not represent an earnings range or a count.
 
 **This is a shared field ratio, not a measured ratio for the individual major.** The numerator and denominator both come from the 2016–2018 employment file. Do not divide a field's residual count by a program's earnings count. Tooltips show the shared field totals and ratio; hovering highlights the other rows that share it. Purple boxes are omitted when field counts are suppressed or the row has only a pooled median circle.
+
+For high school rows, purple height equals the fixed reference box height multiplied by the weighted below-cutoff population divided by the weighted qualifying population. The share below the cutoff is below-cutoff population divided by the total base. Tooltips and the high school table label these as ACS estimates and show the cutoff and counts.
 
 ## Static hosting
 

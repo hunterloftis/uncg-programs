@@ -9,6 +9,7 @@
   --nc: #f5d46a;
   --us: #f59a56;
   --residual: #dc9bcb;
+  --hs-residual: #b5a8df;
   --pooled: #59d5bf;
   --red: #ff6764;
   --green: #40c977;
@@ -25,8 +26,12 @@ a { color: var(--college); }
 .text-small { font-size: .875rem; }
 .text-muted, .axis-caption, .cip { color: var(--muted); }
 .tabular-nums { font-variant-numeric: tabular-nums; }
-.meta, .legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin: 8px 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 8px 0; }
+.legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; margin: 16px 0; }
+.legend-item dt { font-weight: 500; }
+.legend-item dd { margin: 4px 0 0; color: var(--muted); }
 .swatch { display: inline-block; width: 18px; height: 9px; margin-right: 6px; background: color-mix(in srgb, var(--college) 50%, transparent); }
+.median-key { display: inline-block; width: 18px; height: 14px; margin-right: 6px; border-left: 3px solid var(--foreground); vertical-align: middle; }
 .height-key { width: 240px; height: 72px; max-width: 100%; }
 .height-key rect { fill: color-mix(in srgb, var(--college) 50%, transparent); }
 .height-key text { fill: var(--foreground); font-size: 12px; }
@@ -77,6 +82,7 @@ th { font-weight: 500; }
 
 @media (max-width: 480px) {
   body { padding: 12px; }
+  .legend { grid-template-columns: 1fr; }
   .chart { --label-width: 42%; }
   .row-label { padding-right: 8px; }
   .axis-label { font-size: 12px; }
