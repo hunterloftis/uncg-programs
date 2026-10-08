@@ -17,7 +17,7 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; padding: 16px; }
-main { --legend-rows: 3; --legend-height: calc(var(--legend-rows) * 1.3125rem + (var(--legend-rows) - 1) * 8px + 25px); max-width: 1100px; margin: auto; position: relative; }
+main { --legend-rows: 3; --legend-height: calc(var(--legend-rows) * 1.3125rem + (var(--legend-rows) - 1) * 8px + 17px); max-width: 1100px; margin: auto; position: relative; }
 h1 { font-size: 1.5rem; font-weight: 500; margin: 0 0 12px; }
 a { color: var(--college); }
 .text-small { font-size: .875rem; }
@@ -27,7 +27,7 @@ a { color: var(--college); }
 .legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; margin: 16px 0; }
 .legend-item h2 { margin: 0; color: var(--foreground); font: inherit; font-weight: 500; }
 .legend-item p { margin: 4px 0 0; color: var(--muted); }
-.sticky-legend { position: sticky; top: 0; z-index: 4; display: grid; grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1.5em; gap: 8px; margin-top: 16px; padding: 12px 0; background: var(--background); border-bottom: 1px solid var(--border); font-weight: 500; }
+.sticky-legend { position: sticky; top: 0; z-index: 4; display: grid; grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1.5em; gap: 8px; margin-top: 16px; padding: 12px 0 4px; background: var(--background); border-bottom: 1px solid var(--border); font-weight: 500; }
 .extreme-legend { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
 .extreme-legend > span { flex-shrink: 0; }
 .swatch { display: inline-block; width: 18px; height: 9px; margin-right: 6px; background: color-mix(in srgb, var(--college) 50%, transparent); }
@@ -90,8 +90,8 @@ thead th { position: sticky; top: 0; z-index: 2; background: var(--background); 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 560px) {
-  main { --legend-rows: 5; }
-  .earnings-key, .pooled-key { grid-row: span 2; }
+  main { --legend-rows: 4; }
+  .earnings-key { grid-row: span 2; }
   .extreme-legend { gap: 4px; font-size: .75rem; }
   .extreme-key, .median-key { margin: 0 4px 0 0; }
 }
@@ -102,6 +102,11 @@ thead th { position: sticky; top: 0; z-index: 2; background: var(--background); 
   .chart { --label-width: 38%; --share-column-width: 66px; }
   .row-label { padding-right: 8px; }
   .axis-label { font-size: 12px; }
+}
+
+@media (max-width: 360px) {
+  main { --legend-rows: 5; }
+  .pooled-key { grid-row: span 2; }
 }
 
 @media (pointer: coarse) {
