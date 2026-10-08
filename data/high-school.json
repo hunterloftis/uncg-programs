@@ -1,0 +1,28 @@
+[
+  {
+    "kind": "reference",
+    "cip": "hs-nc",
+    "label": "High school graduates \u2014 North Carolina",
+    "shortLabel": "NC HS",
+    "q1": 20390,
+    "median": 33240,
+    "q3": 47713,
+    "sampleCount": 7834,
+    "populationEstimate": 221507,
+    "dollarsYear": 2023,
+    "period": "2019\u20132023"
+  },
+  {
+    "kind": "reference",
+    "cip": "hs-us",
+    "label": "High school graduates \u2014 U.S.",
+    "shortLabel": "U.S. HS",
+    "q1": 22791,
+    "median": 35614,
+    "q3": 50976,
+    "sampleCount": 287579,
+    "populationEstimate": 7626652,
+    "dollarsYear": 2023,
+    "period": "2019\u20132023"
+  }
+]

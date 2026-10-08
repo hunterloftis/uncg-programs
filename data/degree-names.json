@@ -1,0 +1,258 @@
+{
+  "050201": {
+    "label": "African American and African Diaspora Studies (BA)",
+    "note": ""
+  },
+  "050207": {
+    "label": "Women's and Gender Studies (BA)",
+    "note": ""
+  },
+  "090101": {
+    "label": "Communication Studies (BA)",
+    "note": ""
+  },
+  "090102": {
+    "label": "Media Studies (BA)",
+    "note": ""
+  },
+  "110701": {
+    "label": "Computer Science (BS)",
+    "note": ""
+  },
+  "110901": {
+    "label": "Information Systems and Supply Chain Management (BS)",
+    "note": ""
+  },
+  "131001": {
+    "label": "Special Education: General Curriculum (BS)",
+    "note": ""
+  },
+  "131003": {
+    "label": "Professions in Deafness (B.S.)",
+    "note": "Historical degree name; now Interpreting, Deaf Education, and Advocacy Services."
+  },
+  "131202": {
+    "label": "Elementary Education (K-6) (BS)",
+    "note": ""
+  },
+  "131203": {
+    "label": "Middle Grades Education (BS)",
+    "note": ""
+  },
+  "131210": {
+    "label": "Birth through Kindergarten Teacher Education (BS)",
+    "note": ""
+  },
+  "131302": {
+    "label": "Art Education (K-12) (BFA)",
+    "note": ""
+  },
+  "131305": {
+    "label": "English, Secondary Education (BA)",
+    "note": ""
+  },
+  "131312": {
+    "label": "Music Education (BM)",
+    "note": ""
+  },
+  "131314": {
+    "label": "Physical Education, Teacher Education (B.S.)",
+    "note": "Historical degree name."
+  },
+  "131317": {
+    "label": "Secondary education: Geography / Political Science / Psychology / Sociology (B.A.)",
+    "note": "Multiple historical degrees share this code."
+  },
+  "131318": {
+    "label": "History, Secondary Education (BA)",
+    "note": ""
+  },
+  "160101": {
+    "label": "Languages, Literatures, and Cultures (B.A.)",
+    "note": "Historical degree name."
+  },
+  "160901": {
+    "label": "French \u2014 degree match unverified",
+    "note": "Source program label retained; exact degree mapping is unverified."
+  },
+  "160905": {
+    "label": "Spanish (BA)",
+    "note": ""
+  },
+  "161200": {
+    "label": "Classical Studies (B.A.)",
+    "note": "Historical degree name."
+  },
+  "190701": {
+    "label": "Human Development and Family Studies (BS)",
+    "note": ""
+  },
+  "190901": {
+    "label": "Consumer, Apparel, and Retail Studies (BS)",
+    "note": ""
+  },
+  "230101": {
+    "label": "English (BA)",
+    "note": ""
+  },
+  "240101": {
+    "label": "Special Programs in Liberal Studies (B.A. / B.S.)",
+    "note": "Historical degrees; current successor is Liberal and Interdisciplinary Studies."
+  },
+  "260101": {
+    "label": "Biology (BA) / Biology (BS)",
+    "note": ""
+  },
+  "260202": {
+    "label": "Biochemistry (BS)",
+    "note": ""
+  },
+  "270101": {
+    "label": "Mathematics (BA) / Mathematics (BS)",
+    "note": ""
+  },
+  "300501": {
+    "label": "Peace and Conflict Studies (BA)",
+    "note": ""
+  },
+  "301901": {
+    "label": "Nutrition (BS)",
+    "note": ""
+  },
+  "309999": {
+    "label": "Interdisciplinary studies \u2014 degree match unverified",
+    "note": "Source program label retained; exact degree mapping is unverified."
+  },
+  "310101": {
+    "label": "Recreation and Parks Management (B.S.)",
+    "note": "Historical name; now Sport Management and Recreational Therapy."
+  },
+  "310505": {
+    "label": "Kinesiology (B.S.)",
+    "note": "Historical reporting code."
+  },
+  "380101": {
+    "label": "Philosophy (BA)",
+    "note": ""
+  },
+  "380201": {
+    "label": "Religious Studies (B.A.)",
+    "note": "Historical degree name."
+  },
+  "400501": {
+    "label": "Chemistry (BA) / Chemistry (BS)",
+    "note": ""
+  },
+  "400801": {
+    "label": "Physics (B.A. / B.S.)",
+    "note": "Historical degree names."
+  },
+  "420101": {
+    "label": "Psychology (BA) / Psychology (BS)",
+    "note": ""
+  },
+  "440701": {
+    "label": "Social Work (BSW)",
+    "note": ""
+  },
+  "450201": {
+    "label": "Anthropology (B.A.)",
+    "note": "Former major, discontinued in 2024\u201325."
+  },
+  "450601": {
+    "label": "Economics (BA)",
+    "note": ""
+  },
+  "450701": {
+    "label": "Geography (B.A.)",
+    "note": "Historical B.A. cohort; the B.S. began later."
+  },
+  "451001": {
+    "label": "Political Science (BA)",
+    "note": ""
+  },
+  "451101": {
+    "label": "Sociology (BA)",
+    "note": ""
+  },
+  "500301": {
+    "label": "Dance Studies (B.A.) / Dance (B.F.A.)",
+    "note": "Both degrees share this reporting code."
+  },
+  "500408": {
+    "label": "Interior Architecture (B.F.A.)",
+    "note": "Historical name; now Interior Architecture and Design."
+  },
+  "500501": {
+    "label": "Drama (BA) / Drama (BFA)",
+    "note": ""
+  },
+  "500701": {
+    "label": "Art (BA)",
+    "note": ""
+  },
+  "500702": {
+    "label": "Studio Art (BFA)",
+    "note": ""
+  },
+  "500901": {
+    "label": "Music (BA)",
+    "note": ""
+  },
+  "500903": {
+    "label": "Performance (B.M.)",
+    "note": "Historical degree name."
+  },
+  "501002": {
+    "label": "Arts Administration (BA)",
+    "note": ""
+  },
+  "510204": {
+    "label": "Speech Pathology and Audiology (BS)",
+    "note": ""
+  },
+  "512207": {
+    "label": "Public Health Education (B.S.)",
+    "note": ""
+  },
+  "513801": {
+    "label": "Nursing (BSN)",
+    "note": ""
+  },
+  "520201": {
+    "label": "Business Administration (B.S.) / Marketing (B.S.)",
+    "note": "Both degrees used this code in the historical inventory; earnings cannot be separated."
+  },
+  "520301": {
+    "label": "Accounting (BS)",
+    "note": ""
+  },
+  "520601": {
+    "label": "Economics (BS)",
+    "note": ""
+  },
+  "520701": {
+    "label": "Entrepreneurship (BS)",
+    "note": ""
+  },
+  "520801": {
+    "label": "Finance (BS)",
+    "note": ""
+  },
+  "520901": {
+    "label": "Sustainable Tourism and Hospitality (BA)",
+    "note": "Historical degree name in the 2017\u20132018 inventory."
+  },
+  "521101": {
+    "label": "International Business Studies (BS)",
+    "note": ""
+  },
+  "540101": {
+    "label": "History (BA)",
+    "note": ""
+  },
+  "131324": {
+    "label": "Theater Arts Education (BFA)",
+    "note": ""
+  }
+}
