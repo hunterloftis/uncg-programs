@@ -2,7 +2,7 @@
 
 A static chart of UNCG program earnings and high school graduate earnings in North Carolina and the U.S. No dependencies, build step, or external scripts.
 
-Open `index.html` in a browser. Hover or focus a box or circle to see details; click or tap to pin them. Click elsewhere or press Escape to clear the selection.
+Open `index.html` in a browser. Hover or focus a box, circle, or share cell to see details; click or tap to pin them. Click elsewhere or press Escape to clear the selection.
 
 ## Files
 
@@ -32,11 +32,13 @@ The residual category means **no observed employment or marginal employment**, n
 
 High school: weighted estimates from [2019–2023 ACS public microdata](https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/), in 2023 dollars. The base includes civilians aged 25–34 with only a regular high school diploma or GED and no school attendance in the last three months. It includes employed, unemployed, and out-of-labor-force adults. NC uses residents of North Carolina; the U.S. includes the 50 states and DC.
 
-Annual earnings are wages plus net self-employment earnings (`PERNP`), adjusted to 2023 dollars with `ADJINC / 1,000,000`. A fixed cutoff of **$15,080 in 2023 dollars** partitions the base: earnings at or above it qualify for the earnings box; earnings below it, including zero and negative earnings, form the purple group. Current employment status does not determine the group. The cutoff is 40 hours × 52 weeks × $7.25, a benchmark rather than evidence of full-time work.
+Annual earnings use wage-and-salary income (`WAGP`), excluding net self-employment income. The qualifying group has unadjusted annual wages of at least **$12,687.50**: 35 hours × 50 weeks × $7.25, following the [PSEO technical guide, page 6 (June 2023)](https://lehd.ces.census.gov/doc/PSEOTechnicalDocumentation.pdf#page=6). The federal minimum wage was $7.25 throughout 2019–2023, so the nominal cutoff is the same for every survey year. Apply the cutoff **before** inflation adjustment, then adjust qualifying wages to 2023 dollars with `ADJINC / 1,000,000` for the quartiles. The threshold is an earnings benchmark, not evidence of full-time work.
+
+Wages below the cutoff, including zero, form the no/low wage earnings group. Adults whose income comes only from self-employment belong to this group because their wage-and-salary income is zero. Each person belongs to exactly one group; current employment status does not determine the group. `minimumEarnings` is the unadjusted cutoff; `minimumEarningsBasis` records that distinction. `dollarsYear` applies to the reported earnings quartiles.
 
 Each group's population estimate uses person weights (`PWGTP`). Quartiles use the qualifying group's weights and take the first earnings value where cumulative weight reaches 25%, 50%, or 75%; results are rounded to dollars. `sampleCount` is the qualifying survey record count; `totalSampleCount` is the full base record count. `observedCount` and `residualCount` are the qualifying and below-cutoff weighted population estimates; `populationEstimate` is their total. These are survey estimates, not graduation-cohort counts. Confidence intervals are not shown.
 
-**ACS no/low earnings is not the PSEO residual measure.** ACS lacks covered earnings by quarter, includes self-employment, and uses this fixed real-dollar cutoff rather than PSEO's year-specific earnings threshold. The populations and periods differ. These comparisons do not measure the causal effect of a degree.
+**ACS no/low wage earnings is not the PSEO residual measure.** ACS cannot identify earnings in each calendar quarter or reproduce PSEO's covered-job rules. Income refers to the prior 12 months rather than a calendar year. No quarterly or weeks-worked test is imposed. The cutoff follows the linked PSEO technical guide; it does not establish that ACS reproduces the rules of release R2026Q2. The populations and periods differ. These comparisons do not measure the causal effect of a degree.
 
 To rebuild, download [the national person ZIP](https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/csv_pus.zip) outside the repository, then run:
 
@@ -49,15 +51,15 @@ The script reads all four national person CSV parts and derives both geographic 
 
 ## Rendering
 
-Box edges show the 25th and 75th percentiles; the internal line shows the median. UNCG box height is proportional to the earnings sample count. High school boxes have fixed height. Red and green marks identify the lowest and highest quartile edges among UNCG program boxes. High school references are excluded. Rows sort by the displayed median, including pooled circles.
+Box edges show the 25th and 75th percentiles; the internal line shows the median. UNCG box height is proportional to the earnings sample count. High school boxes have fixed height. Red and green marks identify the lowest and highest quartile edges among UNCG program boxes. High school references are excluded. UNCG rows group by two-digit field code; fields sort by their lowest displayed median. Rows within each field sort by the displayed median, including pooled circles. High school references appear first.
 
 Teal circles have fixed size. Their position is the pooled median; their area does not represent a count. Pooled quartiles are available in the source but are not drawn. Tooltips name the cohort and sample count. The program table uses a pooled median where available and labels it; other columns still describe the main cohort. The pooled earnings rules and nationwide coverage match the main PSEO data, but the periods differ.
 
-Purple boxes extend from $0 to the earnings box's left edge. UNCG purple height equals blue height multiplied by the broad-field residual count divided by its employed count. If half the field is in the residual category, these counts are equal and the boxes have equal heights. Purple width and area do not represent an earnings range or a count.
+One “Employed above earnings cutoff” cell spans all displayed program rows in each broad field. The share is the field employed count divided by the sum of its residual and employed counts. Qualifying graduates meet PSEO’s annual earnings cutoff and three-quarter employment test. Both counts come from the 2016–2018 employment file, including beside pooled median circles. A dash means the field counts are suppressed.
 
-**This is a shared field ratio, not a measured ratio for the individual major.** The numerator and denominator both come from the 2016–2018 employment file. Do not divide a field's residual count by a program's earnings count. Tooltips show the shared field totals and ratio; hovering highlights the other rows that share it. Purple boxes are omitted when field counts are suppressed or the row has only a pooled median circle.
+**This is a shared field share, not a measured share for the individual major.** Tooltips show the field totals. Do not divide a field's residual count by a program's earnings count.
 
-For high school rows, purple height equals the fixed reference box height multiplied by the weighted below-cutoff population divided by the weighted qualifying population. The share below the cutoff is below-cutoff population divided by the total base. Tooltips and the high school table label these as ACS estimates and show the cutoff and counts.
+Each high school reference has its own “Employed above earnings cutoff” cell: weighted population at or above the cutoff divided by the full weighted base. “Above” includes earnings exactly at the cutoff. Tooltips and the high school table label these as ACS estimates and show the cutoff and counts. The high school measure cannot reproduce PSEO’s quarterly employment test or job coverage; current employment status is not required.
 
 ## Static hosting
 

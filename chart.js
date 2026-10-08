@@ -4,14 +4,21 @@ const moneyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', curre
 const countFormatter = new Intl.NumberFormat('en-US');
 const money = value => value === null ? 'Suppressed' : moneyFormatter.format(value);
 const count = value => value === null ? 'Suppressed' : countFormatter.format(value);
+const earningsCutoff = entry => `${entry.minimumEarnings.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} ${entry.minimumEarningsBasis}`;
 const hasBox = entry => [entry.earningsCount, entry.q1, entry.median, entry.q3].every(Number.isFinite) && entry.earningsCount > 0;
 const plottedMedian = entry => entry.median ?? entry.fallback?.median ?? null;
 const byMedian = (a, b) => (plottedMedian(a) ?? Infinity) - (plottedMedian(b) ?? Infinity) || a.label.localeCompare(b.label);
-const fields = new Map(earningsData.fields.map(field => [field.cip, field]));
 const programs = earningsData.programs.filter(hasBox);
 const fallbackPrograms = earningsData.programs.filter(entry => entry.fallback);
 const omittedPrograms = earningsData.programs.filter(entry => plottedMedian(entry) === null);
-const observations = [...programs, ...fallbackPrograms, ...earningsData.references].sort(byMedian);
+const displayedPrograms = [...programs, ...fallbackPrograms];
+const groups = [
+  ...earningsData.references.map(entry => ({ field: entry, entries: [entry] })),
+  ...earningsData.fields.map(field => ({
+    field,
+    entries: displayedPrograms.filter(entry => entry.cip.startsWith(`${field.cip}.`)).sort(byMedian)
+  })).filter(group => group.entries.length).sort((a, b) => byMedian(a.entries[0], b.entries[0]))
+];
 const boxes = [...programs, ...earningsData.references];
 const heightScale = 54 / Math.max(...programs.map(program => program.earningsCount));
 const highest = Math.max(...boxes.map(entry => entry.q3));
@@ -42,18 +49,18 @@ function svgElement(tag, attributes, text) {
   return node;
 }
 
-function residualShare(field) {
+function employmentShare(field) {
   const total = field.observedCount + field.residualCount;
   return Number.isFinite(field.observedCount) && Number.isFinite(field.residualCount) && total > 0
-    ? `${(field.residualCount / total * 100).toFixed(1)}%`
+    ? `${(field.observedCount / total * 100).toFixed(1)}%`
     : 'Suppressed';
 }
 
-function addMark(key, node, entry, residual = false) {
+function addMark(key, node, entry, shareCell = false) {
   node.type = 'button';
   node.classList.add('chart-hit');
   node.setAttribute('aria-pressed', 'false');
-  marks.set(key, { node, entry, residual });
+  marks.set(key, { node, entry, shareCell });
   node.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') showEntry(key); });
   node.addEventListener('pointerleave', () => showEntry(selectedKey));
   node.addEventListener('focus', () => showEntry(key));
@@ -68,9 +75,7 @@ for (const extreme of extremes) {
   swatch.style.setProperty('--edge-color', extreme.color);
   swatch.setAttribute('aria-hidden', 'true');
   label.append(swatch, `${extreme.label} ${money(extreme.value)}`);
-  const percentile = extreme.field === 'q1' ? '25th' : '75th';
-  const limit = extreme.label.startsWith('Lowest') ? 'minimum' : 'maximum';
-  item.append(label, element('dd', '', `${extreme.label.split(' ')[0]} ${percentile} percentile across UNCG boxes, not ${limit} individual earnings. Excludes high school and pooled medians.`));
+  item.append(label);
   root.querySelector('.extreme-legend').append(item);
 }
 
@@ -82,70 +87,69 @@ for (const [index, sampleCount] of [20, 100, 300].entries()) {
     svgElement('text', { x: 35 + index * 80, y: 70, 'text-anchor': 'middle' }, sampleCount)
   );
 }
-for (const entry of observations) {
-  const reference = entry.kind === 'reference';
-  const field = reference ? entry : fields.get(entry.cip.slice(0, 2));
-  const available = reference || hasBox(entry);
-  const boxHeight = reference ? 22 : available ? entry.earningsCount * heightScale : 0;
-  const residualHeight = (reference || hasBox(entry)) && Number.isFinite(field?.residualCount) && field.observedCount > 0
-    ? boxHeight * (field.residualCount / field.observedCount)
-    : null;
-  const row = element('div', 'chart-row');
-  row.dataset.cip = entry.cip;
-  row.style.minHeight = `${Math.max(matchMedia('(pointer: coarse)').matches ? 44 : 36, boxHeight + 12, (residualHeight ?? 0) + 12)}px`;
-  const label = element('div', 'row-label');
-  label.append(element('span', 'degree-name', reference ? `${entry.shortLabel} graduates` : entry.label));
-  if (!reference) label.append(element('span', 'cip', `· ${entry.cip}`));
-  const plot = element('div', 'row-plot');
-  plots.push(plot);
-  if (available) {
-    const box = element('button', 'box-hit');
-    box.setAttribute('aria-label', `${entry.label}: 25th percentile ${money(entry.q1)}, median ${money(entry.median)}, 75th percentile ${money(entry.q3)}. ${reference ? count(entry.sampleCount) + ' survey records' : count(entry.earningsCount) + ' graduates in the earnings sample'}.`);
-    box.style.left = `${position(entry.q1)}%`;
-    box.style.width = `${position(entry.q3) - position(entry.q1)}%`;
-    box.style.setProperty('--box-height', `${boxHeight}px`);
-    box.style.setProperty('--box-color', reference ? entry.cip === 'hs-nc' ? 'var(--nc)' : 'var(--us)' : 'var(--college)');
-    const median = element('span', 'median');
-    median.style.left = `${entry.q3 === entry.q1 ? 50 : (entry.median - entry.q1) / (entry.q3 - entry.q1) * 100}%`;
-    box.append(element('span', 'box-fill'), median);
-    for (const extreme of extremes.filter(extreme => !reference && entry[extreme.field] === extreme.value)) {
-      const edge = element('span', `extreme-line ${extreme.field === 'q3' ? 'ceiling' : 'floor'}`);
-      edge.dataset.extreme = extreme.label;
-      edge.dataset.value = extreme.value;
-      edge.style.setProperty('--edge-color', extreme.color);
-      box.append(edge);
+for (const { field, entries } of groups) {
+  const group = element('div', 'chart-group');
+  group.dataset.field = field.cip;
+  const cell = element('button', 'share-cell');
+  cell.style.gridRow = `1 / span ${entries.length}`;
+  const reference = field.kind === 'reference';
+  const share = employmentShare(field);
+  if (share !== 'Suppressed') cell.style.setProperty('--share-width', share);
+  cell.append(
+    element('span', 'cip', reference ? field.shortLabel : `CIP ${field.cip}`),
+    element('span', 'share-value tabular-nums', share === 'Suppressed' ? '—' : share)
+  );
+  cell.setAttribute('aria-label', reference
+    ? `${field.label}: ${share} with annual wage-and-salary earnings at or above ${earningsCutoff(field)}. ACS estimate, ${field.period}.`
+    : `CIP ${field.cip}, ${field.label}: ${share} employed above earnings cutoff, meeting annual and quarterly covered-earnings requirements. Shared field share for ${earningsData.cohort} graduates, not an individual major's employment rate.`);
+  addMark(`${field.cip}:share`, cell, field, true);
+  group.append(cell);
+  for (const entry of entries) {
+    const reference = entry.kind === 'reference';
+    const available = reference || hasBox(entry);
+    const boxHeight = reference ? 22 : available ? entry.earningsCount * heightScale : 0;
+    const row = element('div', 'chart-row');
+    row.dataset.cip = entry.cip;
+    row.style.setProperty('--row-height', `${Math.max(matchMedia('(pointer: coarse)').matches ? 44 : 36, boxHeight + 12)}px`);
+    const label = element('div', 'row-label');
+    label.append(element('span', 'degree-name', reference ? `${entry.shortLabel} graduates` : entry.label));
+    if (!reference) label.append(element('span', 'cip', `· ${entry.cip}`));
+    const plot = element('div', 'row-plot');
+    plots.push(plot);
+    if (available) {
+      const box = element('button', 'box-hit');
+      box.setAttribute('aria-label', `${entry.label}: 25th percentile ${money(entry.q1)}, median ${money(entry.median)}, 75th percentile ${money(entry.q3)}. ${reference ? count(entry.sampleCount) + ' survey records' : count(entry.earningsCount) + ' graduates in the earnings sample'}.`);
+      box.style.left = `${position(entry.q1)}%`;
+      box.style.width = `${position(entry.q3) - position(entry.q1)}%`;
+      box.style.setProperty('--box-height', `${boxHeight}px`);
+      box.style.setProperty('--box-color', reference ? entry.cip === 'hs-nc' ? 'var(--nc)' : 'var(--us)' : 'var(--college)');
+      const median = element('span', 'median');
+      median.style.left = `${entry.q3 === entry.q1 ? 50 : (entry.median - entry.q1) / (entry.q3 - entry.q1) * 100}%`;
+      box.append(element('span', 'box-fill'), median);
+      for (const extreme of extremes.filter(extreme => !reference && entry[extreme.field] === extreme.value)) {
+        const edge = element('span', `extreme-line ${extreme.field === 'q3' ? 'ceiling' : 'floor'}`);
+        edge.dataset.extreme = extreme.label;
+        edge.dataset.value = extreme.value;
+        edge.style.setProperty('--edge-color', extreme.color);
+        box.append(edge);
+      }
+      for (const mark of box.children) mark.setAttribute('aria-hidden', 'true');
+      addMark(`${entry.cip}:box`, box, entry);
+      plot.append(box);
+    } else if (entry.fallback) {
+      const circle = element('button', 'median-hit');
+      circle.style.left = `${position(entry.fallback.median)}%`;
+      circle.setAttribute('aria-label', `${entry.label}: median ${money(entry.fallback.median)}. ${entry.fallback.source}, ${entry.fallback.cohort} graduates, year five. Circle size is fixed.`);
+      const fill = element('span', 'median-fill');
+      fill.setAttribute('aria-hidden', 'true');
+      circle.append(fill);
+      addMark(`${entry.cip}:median`, circle, entry);
+      plot.append(circle);
     }
-    for (const mark of box.children) mark.setAttribute('aria-hidden', 'true');
-    addMark(`${entry.cip}:box`, box, entry);
-    plot.append(box);
-  } else if (entry.fallback) {
-    const circle = element('button', 'median-hit');
-    circle.style.left = `${position(entry.fallback.median)}%`;
-    circle.setAttribute('aria-label', `${entry.label}: median ${money(entry.fallback.median)}. ${entry.fallback.source}, ${entry.fallback.cohort} graduates, year five. Circle size is fixed.`);
-    const fill = element('span', 'median-fill');
-    fill.setAttribute('aria-hidden', 'true');
-    circle.append(fill);
-    addMark(`${entry.cip}:median`, circle, entry);
-    plot.append(circle);
+    row.append(label, plot);
+    group.append(row);
   }
-  if (residualHeight !== null) {
-    const box = element('button', 'box-hit residual-hit');
-    box.dataset.field = field.cip;
-    box.style.left = `${position(0)}%`;
-    box.style.width = `${position(entry.q1) - position(0)}%`;
-    box.style.setProperty('--box-height', `${residualHeight}px`);
-    box.style.setProperty('--box-color', reference ? 'var(--hs-residual)' : 'var(--residual)');
-    box.setAttribute('aria-label', reference
-      ? `${entry.label}: ACS estimates of ${count(entry.residualCount)} people with annual earnings below ${money(entry.minimumEarnings)} and ${count(entry.observedCount)} at or above the cutoff, in ${entry.dollarsYear} dollars. Purple height relative to the fixed earnings box uses these weighted population estimates. The horizontal span does not represent earnings.`
-      : `${entry.label}: shared UNCG field CIP ${field.cip}, ${field.label}. ${count(field.residualCount)} graduates with no observed or marginal employment and ${count(field.observedCount)} employed graduates. Purple-to-blue height ratio uses these field counts, not counts for this individual major. The horizontal span does not represent earnings.`);
-    const fill = element('span', 'box-fill');
-    fill.setAttribute('aria-hidden', 'true');
-    box.append(fill);
-    addMark(`${entry.cip}:residual`, box, field, true);
-    plot.append(box);
-  }
-  row.append(label, plot);
-  root.querySelector('.chart-rows').append(row);
+  root.querySelector('.chart-rows').append(group);
 }
 
 root.querySelector('.program-summary').textContent = `${programs.length} UNCG program boxes · ${fallbackPrograms.length} pooled-cohort median circles · ${earningsData.references.length} high school boxes · ${omittedPrograms.length} unavailable program groups omitted`;
@@ -174,7 +178,7 @@ for (const [entries, selector, counts] of [
     row.append(name);
     for (const key of ['q1', 'median', 'q3']) row.append(element('td', 'text-end text-nowrap tabular-nums', money(key === 'median' ? plottedMedian(entry) : entry[key])));
     for (const key of counts) row.append(element('td', 'text-end tabular-nums', count(entry[key])));
-    if (entry.kind === 'field') row.append(element('td', 'text-end tabular-nums', residualShare(entry)));
+    if (entry.kind === 'field') row.append(element('td', 'text-end tabular-nums', employmentShare(entry)));
     root.querySelector(selector).append(row);
   }
 }
@@ -186,7 +190,7 @@ for (const entry of earningsData.references) {
   row.append(name);
   for (const key of ['q1', 'median', 'q3']) row.append(element('td', 'text-end text-nowrap tabular-nums', money(entry[key])));
   for (const key of ['observedCount', 'residualCount']) row.append(element('td', 'text-end tabular-nums', count(entry[key])));
-  row.append(element('td', 'text-end tabular-nums', residualShare(entry)));
+  row.append(element('td', 'text-end tabular-nums', employmentShare(entry)));
   row.append(element('td', 'text-end tabular-nums', count(entry.totalSampleCount)));
   root.querySelector('.reference-table tbody').append(row);
 }
@@ -197,7 +201,7 @@ function positionTooltip() {
   const rootRect = root.getBoundingClientRect();
   const markRect = active.node.getBoundingClientRect();
   const tipRect = tooltip.getBoundingClientRect();
-  const fraction = active.residual || active.entry.fallback || active.entry.q3 === active.entry.q1 ? .5 : (active.entry.median - active.entry.q1) / (active.entry.q3 - active.entry.q1);
+  const fraction = active.shareCell || active.entry.fallback || active.entry.q3 === active.entry.q1 ? .5 : (active.entry.median - active.entry.q1) / (active.entry.q3 - active.entry.q1);
   const anchorX = markRect.left - rootRect.left + markRect.width * fraction;
   tooltip.style.left = `${Math.max(8, Math.min(rootRect.width - tipRect.width - 8, anchorX - tipRect.width / 2))}px`;
   tooltip.style.top = `${Math.max(0, markRect.top - rootRect.top - tipRect.height - 12)}px`;
@@ -207,23 +211,20 @@ function showEntry(key) {
   activeKey = key;
   const active = marks.get(key);
   tooltip.hidden = !active;
-  for (const [markKey, mark] of marks) {
-    const shared = active?.residual && mark.residual && mark.entry.cip === active.entry.cip;
-    mark.node.classList.toggle('is-selected', markKey === key || Boolean(shared));
-  }
+  for (const [markKey, mark] of marks) mark.node.classList.toggle('is-selected', markKey === key);
   if (!active) return;
-  const { entry, residual } = active;
+  const { entry, shareCell } = active;
   const reference = entry.kind === 'reference';
   const fallback = entry.fallback;
-  const stats = residual && reference ? [
-    [`Below ${money(entry.minimumEarnings)}`, count(entry.residualCount)],
-    [`At or above ${money(entry.minimumEarnings)}`, count(entry.observedCount)],
-    ['Share below cutoff', residualShare(entry)],
+  const stats = shareCell && reference ? [
+    ['At or above nominal wage cutoff', count(entry.observedCount)],
+    ['Below nominal wage cutoff', count(entry.residualCount)],
+    ['Employed above earnings cutoff', employmentShare(entry)],
     ['Survey records (all)', count(entry.totalSampleCount)]
-  ] : residual ? [
+  ] : shareCell ? [
+    ['Meets annual and quarterly earnings rules', count(entry.observedCount)],
     ['No observed / marginal employment', count(entry.residualCount)],
-    ['Employed', count(entry.observedCount)],
-    ['Residual share', residualShare(entry)]
+    ['Employed above earnings cutoff', employmentShare(entry)]
   ] : [
     ...(fallback ? [['Median', money(fallback.median)]] : [
       ['25th percentile', money(entry.q1)],
@@ -234,8 +235,8 @@ function showEntry(key) {
     ...(reference ? [['Estimated people (qualifying)', count(entry.observedCount)]] : [])
   ];
   tooltip.querySelector('.tip-title').textContent = entry.label;
-  tooltip.querySelector('.tip-context').textContent = reference ? `Ages 25–34 · not enrolled · ${residual ? 'ACS no/low earnings estimate' : `annual earnings ≥ ${money(entry.minimumEarnings)}`}`
-    : residual ? `Shared field · CIP ${entry.cip}`
+  tooltip.querySelector('.tip-context').textContent = reference ? `Ages 25–34 · not enrolled · annual wages ≥ ${earningsCutoff(entry)}`
+    : shareCell ? `Shared field · CIP ${entry.cip}`
     : `${fallback ? 'Pooled program group' : 'Program group'} · CIP ${entry.cip}`;
   const details = tooltip.querySelector('.tip-stats');
   details.replaceChildren();

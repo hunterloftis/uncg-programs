@@ -6,7 +6,7 @@ import zipfile
 from pathlib import Path
 
 
-MINIMUM_EARNINGS = 15_080
+MINIMUM_EARNINGS = 35 * 50 * 7.25
 GROUPS = [('NC', 'North Carolina', 'nc'), ('US', 'U.S.', 'us')]
 
 
@@ -18,19 +18,22 @@ def records(path):
             with archive.open(name) as source:
                 rows = csv.reader(io.TextIOWrapper(source))
                 columns = next(rows)
-                required = ['AGEP', 'SCHL', 'SCH', 'ESR', 'PERNP', 'ADJINC', 'PWGTP', 'STATE']
+                required = ['AGEP', 'SCHL', 'SCH', 'ESR', 'WAGP', 'ADJINC', 'PWGTP', 'STATE']
                 indexes = [columns.index(column) for column in required]
                 for row in rows:
-                    age, education, school, employment, earnings, adjustment, weight, state = [row[i] for i in indexes]
+                    age, education, school, employment, wages, adjustment, weight, state = [row[i] for i in indexes]
                     if not (25 <= int(age) <= 34 and education in ('16', '17') and school == '1' and employment in ('1', '2', '3', '6')):
                         continue
-                    yield int(earnings) * int(adjustment) / 1_000_000, int(weight), state
+                    yield int(wages), int(adjustment), int(weight), state
 
 
 def reference(values, label, name, code):
-    qualifying = sorted((earnings, weight) for earnings, weight in values if earnings >= MINIMUM_EARNINGS)
+    qualifying = sorted(
+        (wages * adjustment / 1_000_000, weight)
+        for wages, adjustment, weight in values if wages >= MINIMUM_EARNINGS
+    )
     observed_count = sum(weight for _, weight in qualifying)
-    total_count = sum(weight for _, weight in values)
+    total_count = sum(weight for _, _, weight in values)
     quartiles = []
     cumulative = 0
     for earnings, weight in qualifying:
@@ -53,6 +56,7 @@ def reference(values, label, name, code):
         'observedCount': observed_count,
         'residualCount': total_count - observed_count,
         'minimumEarnings': MINIMUM_EARNINGS,
+        'minimumEarningsBasis': 'before inflation adjustment',
         'dollarsYear': 2023,
         'period': '2019–2023',
     }
@@ -63,10 +67,10 @@ if __name__ == '__main__':
     parser.add_argument('source', type=Path)
     args = parser.parse_args()
     values = {'NC': [], 'US': []}
-    for earnings, weight, state in records(args.source):
-        values['US'].append((earnings, weight))
+    for wages, adjustment, weight, state in records(args.source):
+        values['US'].append((wages, adjustment, weight))
         if state == '37':
-            values['NC'].append((earnings, weight))
+            values['NC'].append((wages, adjustment, weight))
     estimates = [reference(values[label], label, name, code) for label, name, code in GROUPS]
     destination = Path(__file__).resolve().parent / 'data' / 'high-school.json'
     destination.write_text(json.dumps(estimates, indent=2, ensure_ascii=False) + '\n')
