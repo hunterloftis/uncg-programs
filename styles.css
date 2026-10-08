@@ -1,0 +1,73 @@
+:root {
+  color-scheme: light dark;
+  --background: light-dark(#fff, #181818);
+  --foreground: light-dark(#1a1c1f, #fff);
+  --muted: light-dark(#60646c, #b5b7bc);
+  --border: light-dark(#dedfe2, #424448);
+  --popover: light-dark(#fff, #2d2d2d);
+  --college: light-dark(#339cff, #83c3ff);
+  --nc: light-dark(#5dc977, #74d58b);
+  --us: light-dark(#f3883b, #f59a56);
+  --red: light-dark(#e02e2a, #ff6764);
+  --green: light-dark(#00a240, #40c977);
+  font: 16px/1.5 system-ui, sans-serif;
+  color: var(--foreground);
+  background: var(--background);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; padding: 16px; }
+main { max-width: 1100px; margin: auto; position: relative; }
+h1 { font-size: 1.5rem; font-weight: 500; margin: 0 0 12px; }
+a { color: light-dark(#1268b3, #83c3ff); }
+.text-small { font-size: .875rem; }
+.text-muted, .axis-caption, .cip { color: var(--muted); }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+.meta, .legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin: 8px 0; }
+.swatch { display: inline-block; width: 18px; height: 9px; margin-right: 6px; background: color-mix(in srgb, var(--college) 50%, transparent); }
+.height-key { width: 240px; height: 72px; max-width: 100%; }
+.height-key rect { fill: color-mix(in srgb, var(--college) 50%, transparent); }
+.height-key text { fill: var(--foreground); font-size: 12px; }
+.extreme-key { display: inline-block; height: 14px; border-left: 2px solid var(--edge-color); margin: 0 8px 0 4px; vertical-align: middle; }
+.ceiling { border-left-style: dashed; }
+.chart { --label-width: min(280px, 38%); margin-top: 18px; font-size: 12px; }
+.chart-row, .axis-row { display: grid; grid-template-columns: var(--label-width) minmax(0, 1fr); }
+.chart-row { border-bottom: 1px solid color-mix(in srgb, var(--border) 45%, transparent); }
+.row-label { display: flex; align-items: center; gap: 4px; min-width: 0; padding-right: 12px; white-space: nowrap; }
+.degree-name { overflow: hidden; text-overflow: ellipsis; }
+.cip { flex-shrink: 0; }
+.row-plot { position: relative; min-width: 0; border-inline: 1px solid var(--border); }
+.grid-line { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--border); pointer-events: none; }
+.box-hit { position: absolute; top: 0; height: 100%; border: 0; padding: 0; background: transparent; cursor: pointer; color: inherit; font: inherit; }
+.box-fill { position: absolute; top: 50%; left: 0; width: 100%; height: var(--box-height); transform: translateY(-50%); background: var(--box-color); opacity: .55; pointer-events: none; }
+.box-hit.is-selected .box-fill { opacity: 1; }
+.median { position: absolute; top: 50%; height: max(6px, var(--box-height)); border-left: 1.5px solid var(--foreground); transform: translateY(-50%); pointer-events: none; }
+.extreme-line { position: absolute; top: 50%; height: max(10px, var(--box-height)); border-left: 2px solid var(--edge-color); transform: translateY(-50%); pointer-events: none; }
+.floor { left: 0; }
+.extreme-line.ceiling { right: 0; border-left-style: dashed; }
+.axis { position: relative; height: 32px; }
+.tick { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.top-axis .tick { bottom: 8px; }
+.bottom-axis .tick { top: 8px; }
+.axis-label { text-align: center; }
+.quartile-tooltip { position: absolute; z-index: 3; pointer-events: none; width: max-content; max-width: min(340px, calc(100% - 16px)); background: var(--popover); color: var(--foreground); padding: 12px; border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 16px #0002; font-size: .875rem; }
+.tip-title { font-weight: 500; margin-bottom: 6px; }
+.tip-row { margin-top: 4px; }
+details { margin-top: 18px; }
+summary { cursor: pointer; width: fit-content; }
+li { margin: 6px 0; }
+.table-responsive { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-weight: 500; }
+.table-name { width: 42%; }
+.text-end { text-align: right; }
+.text-nowrap { white-space: nowrap; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 480px) {
+  body { padding: 12px; }
+  .chart { --label-width: 42%; }
+  .row-label { padding-right: 8px; }
+  .axis-label { font-size: 12px; }
+}

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare UNCG earnings by major with North Carolina and national high school graduate earnings.">
+  <title>UNCG Major Earnings</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="data.js" defer></script>
+  <script src="chart.js" defer></script>
+</head>
+<body>
+<main id="uncg-programs">
+  <h1>UNCG earnings and high school references</h1>
+  <div class="meta text-small text-muted">
+    <span>UNCG: 2019 cohort, fourth year after graduation</span><span>Median earnings: lowest to highest</span>
+  </div>
+  <div class="legend text-small">
+    <span><span class="swatch" aria-hidden="true"></span>UNCG box: middle 50%</span>
+    <span>Vertical mark: median</span>
+    <span><span class="swatch" style="background:var(--nc)" aria-hidden="true"></span>NC high school</span>
+    <span><span class="swatch" style="background:var(--us)" aria-hidden="true"></span>U.S. high school</span>
+  </div>
+  <div class="text-small text-muted">All boxes: middle 50% · High school: 2023 dollars, fixed box height · See notes</div>
+  <div class="legend text-small">
+    <span>UNCG box height = graduates with NC wages</span>
+    <svg class="height-key" role="img" aria-label="Box heights for 20, 100, and 300 graduates; height is proportional to the count"></svg>
+  </div>
+  <div class="legend extreme-legend text-small tabular-nums" aria-label="Lowest and highest quartile reference lines"></div>
+  <section class="chart" aria-label="UNCG wage quartiles and Census high school earnings quartiles">
+    <div class="axis-row"><span class="axis-caption">Degree · CIP</span><div class="axis top-axis" aria-hidden="true"></div></div>
+    <div class="chart-rows"></div>
+    <div class="axis-row"><span></span><div class="axis bottom-axis" aria-hidden="true"></div></div>
+    <div class="axis-row"><span></span><div class="axis-caption axis-label">Annual earnings (USD; source dollar bases differ)</div></div>
+  </section>
+  <div class="tooltip quartile-tooltip" role="tooltip" hidden>
+    <div class="tip-title"></div>
+    <div class="tip-sample tip-row tabular-nums"></div>
+    <div class="tip-quartiles tip-row tabular-nums"></div>
+    <div class="tip-graduates tip-row text-small"></div>
+    <div class="tip-source tip-row text-small"></div>
+    <div class="tip-note tip-row text-small"></div>
+  </div>
+  <div class="sr-only selection-status" aria-live="polite"></div>
+  <div class="text-small text-muted">44 UNCG boxes · 2 high school quartile boxes · 19 program records with suppressed counts or quartiles</div>
+  <div class="text-small text-muted">Sources: <a href="https://tower.nc.gov/data-sets" target="_blank" rel="noopener noreferrer">NC TOWER data</a> · <a href="https://tower.nc.gov/about-us" target="_blank" rel="noopener noreferrer">Definitions</a> · <a href="https://catalog.uncg.edu/Archive/UGB_2017-2018.pdf#page=666" target="_blank" rel="noopener noreferrer">UNCG degree inventory</a></div>
+  <div class="text-small text-muted">High school estimates: <a href="https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" target="_blank" rel="noopener noreferrer">Census 2019–2023 ACS microdata</a> · <a href="https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/PUMS_Data_Dictionary_2019-2023.pdf" target="_blank" rel="noopener noreferrer">Definitions</a></div>
+  <details>
+    <summary class="cursor-interaction">Notes on the data and boxes</summary>
+    <ul class="text-small">
+      <li>Left and right edges show the 25th and 75th earnings percentiles. The vertical mark shows the median. The lowest and highest 25% of earners are not drawn.</li>
+      <li>Colored marks identify four extreme box edges: red for the lowest floor and ceiling, green for the highest. Floor means the 25th percentile (solid line); ceiling means the 75th percentile (dashed line). These are quartile edges, not minimum or maximum individual earnings. Extremes use the entries drawn on this chart.</li>
+      <li>Box height is proportional to the full count of graduates with NC wages. It is not the count within the middle 50%. Box area does not represent a count, and the fill does not imply an even income distribution.</li>
+      <li>Each entry occupies one row, sorted by median earnings from lowest to highest. All UNCG boxes use the same count-to-height scale. High school reference boxes have fixed height; their survey samples cannot be compared as graduation-cohort counts. Survey sample counts appear in the tooltip.</li>
+      <li>NC TOWER reports nominal annual wages from NC unemployment-insurance records. Work outside NC, federal jobs, and self-employment are excluded. Graduates may still be enrolled in further education.</li>
+      <li>The UNCG cohort is labeled 2019 in NC TOWER; earnings cover the fourth year after graduation, in nominal dollars. It differs from the federal earnings sample used in the earlier chart.</li>
+      <li>High school quartiles and medians are calculated together from 2019–2023 ACS public microdata: ages 25–34, regular high school diploma or GED only, civilian employed, no school attendance in the prior three months, and positive annual earnings. Both NC and national estimates use the same filters.</li>
+      <li>Earnings include wages and net self-employment earnings (PERNP), adjusted to 2023 dollars with ADJINC. Percentiles use Census person weights (PWGTP): each is the first earnings value at which cumulative weight reaches 25%, 50%, or 75%. Values are rounded to the dollar. They are survey estimates; confidence intervals are not shown.</li>
+      <li>These Census estimates replace the earlier federal high school median references. No claim is made that they reproduce the federal benchmark calculation. Populations and measurement periods differ from the UNCG cohort. NC TOWER nominal wages and Census 2023 dollars share the dollar axis without a further inflation conversion.</li>
+      <li>Missing values are privacy-suppressed, not zero. The table retains all 63 six-digit program records. Some codes still combine degrees; a student with two majors may appear in both programs.</li>
+      <li>Names use UNCG degree inventories, with historical names and combined degrees noted. These historical programs are not a list of all degrees offered today.</li>
+    </ul>
+  </details>
+  <details>
+    <summary class="cursor-interaction">All program names, quartiles, counts, and notes</summary>
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead><tr><th class="table-name" scope="col">UNCG degree or group</th><th scope="col" class="text-end">25th</th><th scope="col" class="text-end">Median</th><th scope="col" class="text-end">75th</th><th scope="col" class="text-end">NC wage count</th><th scope="col" class="text-end">All graduates</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </details>
+  <noscript>Enable JavaScript to draw the chart and view program details.</noscript>
+</main>
+</body>
+</html>
