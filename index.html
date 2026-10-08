@@ -17,31 +17,6 @@
       <span>Annual earnings in 2023 dollars</span>
     </div>
   </header>
-  <div class="legend text-small" role="group" aria-label="Chart explanations and limitations">
-    <div class="legend-item" role="group" aria-labelledby="uncg-earnings-key">
-      <h2 id="uncg-earnings-key">UNCG earnings</h2>
-      <p>Middle 50% of earnings five years after graduation (2016–2018 graduates). Excludes low or intermittent covered earnings; may include students.</p>
-      <p>Box height shows the earnings sample count. High school box heights do not show counts.</p>
-      <p><svg class="height-key" role="img" aria-label="Box heights for 20, 100, and 300 graduates; height is proportional to the count"></svg></p>
-    </div>
-    <div class="legend-item" role="group" aria-labelledby="pooled-median-key">
-      <h2 id="pooled-median-key">Pooled median</h2>
-      <p>Some data sources do not provide enough information to show earnings ranges. Circles show pooled medians for programs without a range for the 2016–2018 cohort.</p>
-      <p>Five-year median for 2001–2018 graduates; earnings measured in 2006–2023. Circle size does not show a count.</p>
-    </div>
-    <div class="legend-item" role="group" aria-labelledby="high-school-key">
-      <h2 id="high-school-key">US and NC high school earnings</h2>
-      <p>Middle 50% of ACS wages (2019–2023): ages 25–34, diploma/GED only, not enrolled, annual wages of at least $12,687.50 before inflation adjustment.</p>
-    </div>
-    <div class="legend-item">
-      <h2>Employed above threshold</h2>
-      <p>UNCG: share of 2016–2018 graduates by broad field, not individual major. Requires the annual cutoff and earnings in at least three quarters. High school: share meeting the annual wage cutoff only; current employment is not required.</p>
-    </div>
-    <div class="legend-item">
-      <h2>UNCG quartile extremes</h2>
-      <p>Floor = 25th percentile; ceiling = 75th. Excludes high school and pooled medians.</p>
-    </div>
-  </div>
   <section class="chart program-chart" aria-label="UNCG program earnings quartiles grouped by field, shared employment shares above the earnings cutoff, and high school references">
     <div class="chart-header">
       <div class="chart-legend text-small" role="group" aria-label="Chart marks">
@@ -62,6 +37,38 @@
     <div class="axis-row"><span></span><div class="axis-caption axis-label">Annual earnings (2023 USD)</div><span></span></div>
   </section>
   <div class="program-summary text-small text-muted"></div>
+  <section class="legend text-small" aria-label="How to read the chart">
+    <div class="legend-item" role="group" aria-labelledby="uncg-earnings-key">
+      <h2 id="uncg-earnings-key">Reading the UNCG earnings boxes</h2>
+      <p>Blue boxes show annual earnings for UNCG bachelor's graduates from 2016–2018, measured five years after graduation in 2021–2023. All amounts are adjusted to 2023 dollars.</p>
+      <p>Each box covers the middle 50% of earnings: a quarter of the sample earns less than its left edge, and a quarter earns more than its right edge. The white line marks the median, where half earns less and half earns more.</p>
+      <p>Taller boxes mean more graduates in the earnings sample. The examples below show heights for 20, 100, and 300 graduates.</p>
+      <p><svg class="height-key" role="img" aria-label="Box heights for 20, 100, and 300 graduates; height is proportional to the count"></svg></p>
+      <p>The sample includes graduates with earnings in at least three of the year's four quarters and annual earnings at least equal to a year of full-time work at the federal minimum wage. It excludes graduates with low or intermittent earnings and jobs outside the records. Some graduates may still be students.</p>
+    </div>
+    <div class="legend-item" role="group" aria-labelledby="pooled-median-key">
+      <h2 id="pooled-median-key">Why some programs have circles</h2>
+      <p>When Census does not publish an earnings range for a program's 2016–2018 graduates, a blue circle shows the median from several graduation groups combined. This is the pooled median: half of the qualifying graduates earned less and half earned more.</p>
+      <p>These circles use 2001–2018 graduates, with earnings measured five years after graduation in 2006–2023 and adjusted to 2023 dollars. They cover a longer period than the boxes. Circle size is fixed and does not show how many graduates were counted.</p>
+      <p>Programs with no published median in either group remain in the data table but do not appear in the chart.</p>
+    </div>
+    <div class="legend-item" role="group" aria-labelledby="high-school-key">
+      <h2 id="high-school-key">Comparing with high school graduates</h2>
+      <p>Yellow boxes show North Carolina high school graduates; orange boxes show high school graduates across the U.S. Both use Census American Community Survey data from 2019–2023 for adults ages 25–34 whose highest education is a high school diploma or GED and who have not attended school in the past three months.</p>
+      <p>The boxes show the middle 50% of annual wage-and-salary earnings among people earning at least $12,687.50 before adjustment for inflation. This cutoff equals 35 hours a week for 50 weeks at the $7.25 federal minimum wage. High school boxes have a fixed height; their height does not show a count.</p>
+      <p>These groups cover different people and years than the UNCG data. The comparison does not measure how much earning a degree changes a person's income.</p>
+    </div>
+    <div class="legend-item">
+      <h2>What “Employed above threshold” means</h2>
+      <p>For UNCG, the percentage shows how many 2016–2018 graduates meet the annual and quarterly earnings rules described above. Each percentage covers a broad field of study and applies to all program rows beside it. It is not a separate employment rate for each major. A dash means Census has withheld the counts needed to calculate it.</p>
+      <p>For high school graduates, the percentage shows how many people meet the $12,687.50 annual wage cutoff. The survey does not apply UNCG's quarterly earnings rule, and a person need not be employed at the time of the survey. The two percentages therefore measure different things.</p>
+    </div>
+    <div class="legend-item">
+      <h2>What the red and green marks mean</h2>
+      <p>The floor is a box's left edge, or 25th percentile; the ceiling is its right edge, or 75th percentile. These edges mark the middle half of earnings, not the lowest and highest individual earnings.</p>
+      <p>Across the UNCG program boxes, red marks identify the lowest floor and lowest ceiling; green marks identify the highest floor and highest ceiling. Solid marks show floors and dashed marks show ceilings. High school boxes and pooled median circles are excluded from this comparison.</p>
+    </div>
+  </section>
   <template id="tooltip-template">
     <div class="tooltip quartile-tooltip" role="tooltip">
       <div class="tip-title"></div>

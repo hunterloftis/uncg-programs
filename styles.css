@@ -95,13 +95,16 @@ thead th { position: sticky; top: 0; z-index: 2; background: var(--background); 
 .text-end { text-align: right; }
 .text-nowrap { white-space: nowrap; }
 
+@media (max-width: 720px) {
+  .legend { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 560px) {
   .extreme-legend { font-size: .75rem; }
 }
 
 @media (max-width: 480px) {
   body { padding: 12px; }
-  .legend { grid-template-columns: 1fr; }
   .chart { --label-width: 38%; --share-column-width: 66px; }
   .row-label { padding-right: 8px; }
   .axis-label { font-size: 12px; }
