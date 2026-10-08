@@ -235,7 +235,7 @@ function showEntry(key) {
     ...(reference ? [['Estimated people (qualifying)', count(entry.observedCount)]] : [])
   ];
   tooltip.querySelector('.tip-title').textContent = entry.label;
-  tooltip.querySelector('.tip-context').textContent = reference ? `Ages 25–34 · not enrolled · annual wages ≥ ${earningsCutoff(entry)}`
+  tooltip.querySelector('.tip-context').textContent = reference ? `Ages 25–34 · not enrolled · ${shareCell ? 'all wage levels' : `annual wages ≥ ${earningsCutoff(entry)}`}`
     : shareCell ? `Shared field · CIP ${entry.cip}`
     : `${fallback ? 'Pooled program group' : 'Program group'} · CIP ${entry.cip}`;
   const details = tooltip.querySelector('.tip-stats');
