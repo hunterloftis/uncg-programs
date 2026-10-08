@@ -2,7 +2,7 @@
 
 A static chart of UNCG program earnings and high school graduate earnings in North Carolina and the U.S. No dependencies, build step, or external scripts.
 
-Open `index.html` in a browser. Hover or focus a box, circle, or share cell to see details; click or tap to pin them. Click elsewhere or press Escape to clear the selection.
+Open `index.html` in a browser. Hover or focus a box, circle, or share cell to see details. CSS controls tooltip visibility and anchor positioning.
 
 ## Files
 

@@ -17,11 +17,6 @@
       <span>Annual earnings in 2023 dollars</span>
     </div>
   </header>
-  <div class="sticky-legend text-small" role="group" aria-label="Chart marks">
-    <span class="earnings-key"><span class="text-nowrap" aria-hidden="true"><span class="swatch"></span><span class="swatch" style="background:var(--nc)"></span><span class="swatch" style="background:var(--us)"></span></span>Earnings range (middle 50%, height = graduates)</span>
-    <div class="extreme-legend tabular-nums" role="group" aria-label="Median and lowest and highest UNCG degree-program quartile edges" tabindex="0"><span><span class="median-key" aria-hidden="true"></span>Median</span></div>
-    <span class="pooled-key"><span class="swatch circle-swatch" aria-hidden="true"></span>Earnings median (pooled, low graduate count)</span>
-  </div>
   <div class="legend text-small" role="group" aria-label="Chart explanations and limitations">
     <div class="legend-item" role="group" aria-labelledby="uncg-earnings-key">
       <h2 id="uncg-earnings-key">UNCG earnings</h2>
@@ -48,22 +43,36 @@
     </div>
   </div>
   <section class="chart program-chart" aria-label="UNCG program earnings quartiles grouped by field, shared employment shares above the earnings cutoff, and high school references">
-    <div class="axis-row chart-header"><span class="axis-caption">Degree · CIP</span><div class="axis top-axis" aria-hidden="true"></div><span class="axis-caption share-caption">Employed above threshold</span></div>
+    <div class="chart-header">
+      <div class="chart-legend text-small" role="group" aria-label="Chart marks">
+        <span><span class="text-nowrap" aria-hidden="true"><span class="swatch"></span><span class="swatch" style="background:var(--nc)"></span><span class="swatch" style="background:var(--us)"></span></span>Earnings range (middle 50%, height = graduates)</span>
+        <div class="extreme-legend tabular-nums" role="group" aria-label="Median and lowest and highest UNCG degree-program quartile edges" tabindex="0">
+          <span><span class="median-key" aria-hidden="true"></span>Median</span>
+          <span><span class="extreme-key floor" style="--edge-color:var(--red)" aria-hidden="true"></span>Low floor</span>
+          <span><span class="extreme-key ceiling" style="--edge-color:var(--red)" aria-hidden="true"></span>Low ceiling</span>
+          <span><span class="extreme-key floor" style="--edge-color:var(--green)" aria-hidden="true"></span>High floor</span>
+          <span><span class="extreme-key ceiling" style="--edge-color:var(--green)" aria-hidden="true"></span>High ceiling</span>
+        </div>
+        <span><span class="swatch circle-swatch" aria-hidden="true"></span>Earnings median (pooled, low graduate count)</span>
+      </div>
+      <div class="axis-row"><span class="axis-caption">Degree · CIP</span><div class="axis top-axis" aria-hidden="true"></div><span class="axis-caption share-caption">Employed above threshold</span></div>
+    </div>
     <div class="chart-rows"></div>
     <div class="axis-row"><span></span><div class="axis bottom-axis" aria-hidden="true"></div><span></span></div>
     <div class="axis-row"><span></span><div class="axis-caption axis-label">Annual earnings (2023 USD)</div><span></span></div>
   </section>
   <div class="program-summary text-small text-muted"></div>
-  <div class="tooltip quartile-tooltip" role="tooltip" hidden>
-    <div class="tip-title"></div>
-    <div class="tip-context text-small text-muted"></div>
-    <dl class="tip-stats tabular-nums"></dl>
-    <div class="tip-footer text-small text-muted">
-      <div class="tip-source"></div>
-      <div class="tip-period"></div>
+  <template id="tooltip-template">
+    <div class="tooltip quartile-tooltip" role="tooltip">
+      <div class="tip-title"></div>
+      <div class="tip-context text-small text-muted"></div>
+      <dl class="tip-stats tabular-nums"></dl>
+      <div class="tip-footer text-small text-muted">
+        <div class="tip-source"></div>
+        <div class="tip-period"></div>
+      </div>
     </div>
-  </div>
-  <div class="sr-only selection-status" aria-live="polite"></div>
+  </template>
   <div class="text-small text-muted">UNCG sources: <a href="https://lehd.ces.census.gov/data/pseo/R2026Q2/nc/" target="_blank" rel="noopener noreferrer">Census PSEO R2026Q2 data</a> · <a href="https://lehd.ces.census.gov/data/pseo_documentation.html" target="_blank" rel="noopener noreferrer">Definitions</a> · <a href="https://catalog.uncg.edu/Archive/UGB_2017-2018.pdf#page=666" target="_blank" rel="noopener noreferrer">UNCG degree inventory</a></div>
   <div class="text-small text-muted">High school estimates: <a href="https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" target="_blank" rel="noopener noreferrer">Census 2019–2023 ACS microdata</a> · <a href="https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/PUMS_Data_Dictionary_2019-2023.pdf" target="_blank" rel="noopener noreferrer">Definitions</a></div>
   <details>

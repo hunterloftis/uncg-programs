@@ -1,5 +1,5 @@
 const root = document.getElementById('uncg-programs');
-const tooltip = root.querySelector('.quartile-tooltip');
+const tooltipTemplate = root.querySelector('#tooltip-template');
 const moneyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const countFormatter = new Intl.NumberFormat('en-US');
 const money = value => value === null ? 'Suppressed' : moneyFormatter.format(value);
@@ -30,10 +30,7 @@ const extremes = [
   { label: 'High floor', field: 'q1', value: Math.max(...programs.map(entry => entry.q1)), color: 'var(--green)' },
   { label: 'High ceiling', field: 'q3', value: Math.max(...programs.map(entry => entry.q3)), color: 'var(--green)' }
 ];
-const marks = new Map();
 const plots = [];
-let selectedKey = null;
-let activeKey = null;
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -56,25 +53,42 @@ function employmentShare(field) {
     : 'Suppressed';
 }
 
-function addMark(key, node, entry, shareCell = false) {
+function addTooltip(key, node, entry, shareCell = false) {
+  const tooltip = tooltipTemplate.content.firstElementChild.cloneNode(true);
+  tooltip.id = `tip-${key}`;
   node.type = 'button';
   node.classList.add('chart-hit');
-  node.setAttribute('aria-pressed', 'false');
-  marks.set(key, { node, entry, shareCell });
-  node.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') showEntry(key); });
-  node.addEventListener('pointerleave', () => showEntry(selectedKey));
-  node.addEventListener('focus', () => showEntry(key));
-  node.addEventListener('blur', () => showEntry(selectedKey));
-  node.addEventListener('click', () => selectEntry(key === selectedKey ? null : key));
-}
-
-for (const extreme of extremes) {
-  const label = element('span');
-  const swatch = element('span', `extreme-key ${extreme.field === 'q3' ? 'ceiling' : 'floor'}`);
-  swatch.style.setProperty('--edge-color', extreme.color);
-  swatch.setAttribute('aria-hidden', 'true');
-  label.append(swatch, extreme.label);
-  root.querySelector('.extreme-legend').append(label);
+  node.setAttribute('aria-describedby', tooltip.id);
+  const reference = entry.kind === 'reference';
+  const fallback = entry.fallback;
+  const stats = shareCell && reference ? [
+    ['At or above nominal wage cutoff', count(entry.observedCount)],
+    ['Below nominal wage cutoff', count(entry.residualCount)],
+    ['Employed above threshold', employmentShare(entry)],
+    ['Survey records (all)', count(entry.totalSampleCount)]
+  ] : shareCell ? [
+    ['Meets annual and quarterly earnings rules', count(entry.observedCount)],
+    ['No observed / marginal employment', count(entry.residualCount)],
+    ['Employed above threshold', employmentShare(entry)]
+  ] : [
+    ...(fallback ? [['Median', money(fallback.median)]] : [
+      ['25th percentile', money(entry.q1)],
+      ['Median', money(entry.median)],
+      ['75th percentile', money(entry.q3)]
+    ]),
+    [reference ? 'Survey records (qualifying)' : 'Graduates in sample', count(reference ? entry.sampleCount : (fallback ?? entry).earningsCount)],
+    ...(reference ? [['Estimated people (qualifying)', count(entry.observedCount)]] : [])
+  ];
+  tooltip.querySelector('.tip-title').textContent = entry.label;
+  tooltip.querySelector('.tip-context').textContent = reference ? `Ages 25–34 · not enrolled · ${shareCell ? 'all wage levels' : `annual wages ≥ ${earningsCutoff(entry)}`}`
+    : shareCell ? `Shared field · CIP ${entry.cip}`
+    : `${fallback ? 'Pooled program group' : 'Program group'} · CIP ${entry.cip}`;
+  const details = tooltip.querySelector('.tip-stats');
+  for (const [label, value] of stats) details.append(element('dt', '', label), element('dd', '', value));
+  tooltip.querySelector('.tip-source').textContent = reference ? `Census ACS · ${entry.dollarsYear} dollars` : 'Census PSEO';
+  tooltip.querySelector('.tip-period').textContent = reference ? `${entry.period} survey`
+    : `${(fallback ?? earningsData).cohort} graduates · year ${earningsData.yearsAfterGraduation}`;
+  return tooltip;
 }
 
 const heightKey = root.querySelector('.height-key');
@@ -100,8 +114,7 @@ for (const { field, entries } of groups) {
   cell.setAttribute('aria-label', reference
     ? `${field.label}: ${share} with annual wage-and-salary earnings at or above ${earningsCutoff(field)}. ACS estimate, ${field.period}.`
     : `CIP ${field.cip}, ${field.label}: ${share} employed above threshold, meeting annual and quarterly covered-earnings requirements. Shared field share for ${earningsData.cohort} graduates, not an individual major's employment rate.`);
-  addMark(`${field.cip}:share`, cell, field, true);
-  group.append(cell);
+  group.append(cell, addTooltip(`${field.cip}:share`, cell, field, true));
   for (const entry of entries) {
     const reference = entry.kind === 'reference';
     const available = reference || hasBox(entry);
@@ -132,8 +145,7 @@ for (const { field, entries } of groups) {
         box.append(edge);
       }
       for (const mark of box.children) mark.setAttribute('aria-hidden', 'true');
-      addMark(`${entry.cip}:box`, box, entry);
-      plot.append(box);
+      plot.append(box, addTooltip(`${entry.cip}:box`, box, entry));
     } else if (entry.fallback) {
       const circle = element('button', 'median-hit');
       circle.style.left = `${position(entry.fallback.median)}%`;
@@ -141,8 +153,7 @@ for (const { field, entries } of groups) {
       const fill = element('span', 'median-fill');
       fill.setAttribute('aria-hidden', 'true');
       circle.append(fill);
-      addMark(`${entry.cip}:median`, circle, entry);
-      plot.append(circle);
+      plot.append(circle, addTooltip(`${entry.cip}:median`, circle, entry));
     }
     row.append(label, plot);
     group.append(row);
@@ -193,65 +204,6 @@ for (const entry of earningsData.references) {
   root.querySelector('.reference-table tbody').append(row);
 }
 
-function positionTooltip() {
-  const active = marks.get(activeKey);
-  if (!active) return;
-  const rootRect = root.getBoundingClientRect();
-  const markRect = active.node.getBoundingClientRect();
-  const tipRect = tooltip.getBoundingClientRect();
-  const fraction = active.shareCell || active.entry.fallback || active.entry.q3 === active.entry.q1 ? .5 : (active.entry.median - active.entry.q1) / (active.entry.q3 - active.entry.q1);
-  const anchorX = markRect.left - rootRect.left + markRect.width * fraction;
-  tooltip.style.left = `${Math.max(8, Math.min(rootRect.width - tipRect.width - 8, anchorX - tipRect.width / 2))}px`;
-  tooltip.style.top = `${Math.max(0, markRect.top - rootRect.top - tipRect.height - 12)}px`;
-}
-
-function showEntry(key) {
-  activeKey = key;
-  const active = marks.get(key);
-  tooltip.hidden = !active;
-  for (const [markKey, mark] of marks) mark.node.classList.toggle('is-selected', markKey === key);
-  if (!active) return;
-  const { entry, shareCell } = active;
-  const reference = entry.kind === 'reference';
-  const fallback = entry.fallback;
-  const stats = shareCell && reference ? [
-    ['At or above nominal wage cutoff', count(entry.observedCount)],
-    ['Below nominal wage cutoff', count(entry.residualCount)],
-    ['Employed above threshold', employmentShare(entry)],
-    ['Survey records (all)', count(entry.totalSampleCount)]
-  ] : shareCell ? [
-    ['Meets annual and quarterly earnings rules', count(entry.observedCount)],
-    ['No observed / marginal employment', count(entry.residualCount)],
-    ['Employed above threshold', employmentShare(entry)]
-  ] : [
-    ...(fallback ? [['Median', money(fallback.median)]] : [
-      ['25th percentile', money(entry.q1)],
-      ['Median', money(entry.median)],
-      ['75th percentile', money(entry.q3)]
-    ]),
-    [reference ? 'Survey records (qualifying)' : 'Graduates in sample', count(reference ? entry.sampleCount : (fallback ?? entry).earningsCount)],
-    ...(reference ? [['Estimated people (qualifying)', count(entry.observedCount)]] : [])
-  ];
-  tooltip.querySelector('.tip-title').textContent = entry.label;
-  tooltip.querySelector('.tip-context').textContent = reference ? `Ages 25–34 · not enrolled · ${shareCell ? 'all wage levels' : `annual wages ≥ ${earningsCutoff(entry)}`}`
-    : shareCell ? `Shared field · CIP ${entry.cip}`
-    : `${fallback ? 'Pooled program group' : 'Program group'} · CIP ${entry.cip}`;
-  const details = tooltip.querySelector('.tip-stats');
-  details.replaceChildren();
-  for (const [label, value] of stats) details.append(element('dt', '', label), element('dd', '', value));
-  tooltip.querySelector('.tip-source').textContent = reference ? `Census ACS · ${entry.dollarsYear} dollars` : 'Census PSEO';
-  tooltip.querySelector('.tip-period').textContent = reference ? `${entry.period} survey`
-    : `${(fallback ?? earningsData).cohort} graduates · year ${earningsData.yearsAfterGraduation}`;
-  positionTooltip();
-}
-
-function selectEntry(key) {
-  selectedKey = key;
-  for (const [markKey, { node }] of marks) node.setAttribute('aria-pressed', String(markKey === key));
-  showEntry(key);
-  root.querySelector('.selection-status').textContent = key ? marks.get(key).node.getAttribute('aria-label') : 'Selection cleared.';
-}
-
 function drawTicks() {
   const plotWidth = plots[0].getBoundingClientRect().width;
   const roughStep = domain.high / (plotWidth < 300 ? 3 : 6);
@@ -282,10 +234,7 @@ function drawTicks() {
       plot.prepend(line);
     }
   }
-  positionTooltip();
 }
 
-document.addEventListener('click', event => { if (!event.target.closest('.chart-hit')) selectEntry(null); });
-document.addEventListener('keydown', event => { if (event.key === 'Escape') selectEntry(null); });
 new ResizeObserver(drawTicks).observe(root);
 drawTicks();
