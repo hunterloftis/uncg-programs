@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare UNCG earnings by major with North Carolina and national high school graduate earnings.">
   <title>UNCG Earnings by Degree</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="data.js" defer></script>
-  <script src="chart.js" defer></script>
+  <link rel="stylesheet" href="styles.css?v=2">
+  <script src="data.js?v=2" defer></script>
+  <script src="chart.js?v=2" defer></script>
 </head>
 <body>
 <main id="uncg-programs">
@@ -18,9 +18,9 @@
     </div>
   </header>
   <div class="sticky-legend text-small" role="group" aria-label="Chart marks">
-    <span class="earnings-key"><span class="text-nowrap" aria-hidden="true"><span class="swatch"></span><span class="swatch" style="background:var(--nc)"></span><span class="swatch" style="background:var(--us)"></span></span>Earnings (middle 50% range, height shows sample count)</span>
+    <span class="earnings-key"><span class="text-nowrap" aria-hidden="true"><span class="swatch"></span><span class="swatch" style="background:var(--nc)"></span><span class="swatch" style="background:var(--us)"></span></span>Earnings range (middle 50%, height = graduates)</span>
     <div class="extreme-legend tabular-nums" role="group" aria-label="Median and lowest and highest UNCG degree-program quartile edges" tabindex="0"><span><span class="median-key" aria-hidden="true"></span>Median</span></div>
-    <span class="pooled-key"><span class="swatch circle-swatch" aria-hidden="true"></span>Earnings (pooled median, low sample count)</span>
+    <span class="pooled-key"><span class="swatch circle-swatch" aria-hidden="true"></span>Earnings median (pooled, low graduate count)</span>
   </div>
   <div class="legend text-small" role="group" aria-label="Chart explanations and limitations">
     <div class="legend-item" role="group" aria-labelledby="uncg-earnings-key">
