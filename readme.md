@@ -7,7 +7,7 @@ Open `index.html` in a browser. Hover or focus a box to see details; click or ta
 ## Files
 
 - `index.html`: page, source links, and method notes.
-- `styles.css`: layout and light/dark colors.
+- `styles.css`: layout and fixed dark colors.
 - `chart.js`: chart rendering and interactions.
 - `data.js`: 63 UNCG program records and two high school references. Missing values are `null`.
 
