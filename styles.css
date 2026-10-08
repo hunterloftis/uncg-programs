@@ -31,7 +31,7 @@ a { color: var(--college); }
 .extreme-legend { display: flex; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
 .extreme-legend > span { display: contents; }
 .extreme-legend > span > span { flex-shrink: 0; }
-.extreme-legend > span:not(:last-child)::after { content: ""; flex: 0 1 12px; }
+.extreme-legend > span:not(:last-child)::after { content: ""; flex: 0 1 20px; }
 .swatch { display: inline-block; width: 18px; height: 9px; margin-right: 6px; background: color-mix(in srgb, var(--college) 50%, transparent); }
 .median-key { display: inline-block; height: 14px; margin-right: 6px; border-left: 3px solid var(--foreground); vertical-align: middle; }
 .height-key { width: 240px; height: 72px; max-width: 100%; }
