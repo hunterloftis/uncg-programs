@@ -27,17 +27,19 @@ a { color: var(--college); }
 .legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; margin: 16px 0; }
 .legend-item h2 { margin: 0; color: var(--foreground); font: inherit; font-weight: 500; }
 .legend-item p { margin: 4px 0 0; color: var(--muted); }
-.chart-legend { display: grid; gap: 8px; padding: 12px 0 4px; border-bottom: 1px solid var(--border); font-weight: 500; }
-.extreme-legend { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
-.extreme-legend > span { flex-shrink: 0; }
+.chart-legend { display: grid; gap: 8px; padding: 12px 0 8px; border-bottom: 1px solid var(--border); font-weight: 500; }
+.extreme-legend { display: flex; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
+.extreme-legend > span { display: contents; }
+.extreme-legend > span > span { flex-shrink: 0; }
+.extreme-legend > span:not(:last-child)::after { content: ""; flex: 0 1 12px; }
 .swatch { display: inline-block; width: 18px; height: 9px; margin-right: 6px; background: color-mix(in srgb, var(--college) 50%, transparent); }
-.median-key { display: inline-block; height: 14px; margin: 0 8px 0 4px; border-left: 3px solid var(--foreground); vertical-align: middle; }
+.median-key { display: inline-block; height: 14px; margin-right: 6px; border-left: 3px solid var(--foreground); vertical-align: middle; }
 .height-key { width: 240px; height: 72px; max-width: 100%; }
 .height-key rect { fill: color-mix(in srgb, var(--college) 50%, transparent); }
 .height-key text { fill: var(--foreground); font-size: 12px; }
 .circle-swatch { width: 12px; height: 12px; border-radius: 50%; background: var(--college); }
 .circle-swatch, .median-fill { border: 2px solid var(--foreground); }
-.extreme-key { display: inline-block; height: 14px; border-left: 2px solid var(--edge-color); margin: 0 8px 0 4px; vertical-align: middle; }
+.extreme-key { display: inline-block; height: 14px; border-left: 2px solid var(--edge-color); margin-right: 6px; vertical-align: middle; }
 .ceiling { border-left-style: dashed; }
 .chart { --label-width: min(280px, 38%); --share-column-width: 90px; margin: 32px 0; font-size: 12px; }
 .chart-group, .axis-row { display: grid; grid-template-columns: var(--label-width) minmax(0, 1fr) var(--share-column-width); }
@@ -94,8 +96,7 @@ thead th { position: sticky; top: 0; z-index: 2; background: var(--background); 
 .text-nowrap { white-space: nowrap; }
 
 @media (max-width: 560px) {
-  .extreme-legend { gap: 4px; font-size: .75rem; }
-  .extreme-key, .median-key { margin: 0 4px 0 0; }
+  .extreme-legend { font-size: .75rem; }
 }
 
 @media (max-width: 480px) {
