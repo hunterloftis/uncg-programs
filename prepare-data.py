@@ -8,6 +8,7 @@ degree_names = json.loads((source / 'degree-names.json').read_text())
 field_names = json.loads((source / 'field-names.json').read_text())
 earnings = list(csv.DictReader((source / 'pseo-earnings.csv').open()))
 employment = {row['cipcode']: row for row in csv.DictReader((source / 'pseo-employment.csv').open())}
+pooled = {row['cipcode']: row for row in csv.DictReader((source / 'pseo-pooled-earnings.csv').open())}
 
 
 def published(row, field, status):
@@ -16,7 +17,7 @@ def published(row, field, status):
 
 def entry(row):
     cip = row['cipcode']
-    degrees = [name['label'] for code, name in degree_names.items() if code.startswith(cip.replace('.', ''))]
+    degrees = [name for code, name in degree_names.items() if code.startswith(cip.replace('.', ''))]
     return {
         'cip': cip,
         'label': ' / '.join(degrees) if row['cip_level'] == '4' and degrees else field_names[cip],
@@ -29,6 +30,16 @@ def entry(row):
 
 
 programs = [entry(row) for row in earnings if row['cip_level'] == '4']
+for program in programs:
+    row = pooled.get(program['cip'])
+    if program['median'] is None and row and row['status_y5_earnings'] == '1':
+        program['fallback'] = {
+            'median': published(row, 'y5_p50_earnings', 'status_y5_earnings'),
+            'earningsCount': published(row, 'y5_grads_earn', 'status_y5_grads_earn'),
+            'source': 'Census PSEO: pooled cohorts',
+            'cohort': '2001–2018',
+            'earningsYears': '2006–2023',
+        }
 fields = []
 for row in earnings:
     if row['cip_level'] != '2':

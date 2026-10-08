@@ -13,27 +13,23 @@
 <main id="uncg-programs">
   <h1>UNCG earnings and high school references</h1>
   <div class="meta text-small text-muted">
-    <span>UNCG: 2016–2018 graduates, five years after graduation</span><span>Median earnings: lowest to highest</span>
+    <span>UNCG: five years after graduation · boxes: 2016–2018 graduates · teal circles: pooled cohorts</span><span>Median earnings: lowest to highest</span>
   </div>
   <div class="legend text-small">
     <span><span class="swatch" aria-hidden="true"></span>UNCG box: middle 50%</span>
     <span>Vertical mark: median</span>
+    <span><span class="swatch circle-swatch" style="background:var(--pooled)" aria-hidden="true"></span>Pooled PSEO median · fixed circle size</span>
     <span><span class="swatch" style="background:var(--nc)" aria-hidden="true"></span>NC high school</span>
     <span><span class="swatch" style="background:var(--us)" aria-hidden="true"></span>U.S. high school</span>
-    <span><span class="swatch circle-swatch" aria-hidden="true"></span>No observed / marginal employment</span>
+    <span><span class="swatch" style="background:var(--residual)" aria-hidden="true"></span>No observed / marginal employment</span>
   </div>
   <div class="text-small text-muted">All earnings in 2023 dollars · UNCG includes graduates still studying · High school boxes have fixed height</div>
-  <p class="text-small">Circles at $0 show the shared broad-field count, repeated on each program row. They are count markers; some of these graduates earned money.</p>
+  <p class="text-small">Purple height = blue height × the shared field's residual / employed count. This is a broad-field ratio, not a rate for the individual major. Purple width does not represent an earnings range.</p>
   <div class="legend text-small">
     <span>UNCG box height = graduates in the earnings sample</span>
     <svg class="height-key" role="img" aria-label="Box heights for 20, 100, and 300 graduates; height is proportional to the count"></svg>
   </div>
-  <div class="legend text-small">
-    <span>Circle area = broad-field residual count</span>
-    <svg class="circle-key" role="img" aria-label="Circle areas for 50, 150, and 300 graduates"></svg>
-    <span>Circle areas and box heights use different scales</span>
-  </div>
-  <div class="legend extreme-legend text-small tabular-nums" aria-label="Lowest and highest quartile reference lines"></div>
+  <div class="legend extreme-legend text-small tabular-nums" aria-label="Lowest and highest UNCG degree-program quartile edges"></div>
   <section class="chart program-chart" aria-label="UNCG program earnings quartiles, shared broad-field residual counts, and high school references">
     <div class="axis-row"><span class="axis-caption">Degree · CIP</span><div class="axis top-axis" aria-hidden="true"></div></div>
     <div class="chart-rows"></div>
@@ -43,35 +39,38 @@
   <div class="program-summary text-small text-muted"></div>
   <div class="tooltip quartile-tooltip" role="tooltip" hidden>
     <div class="tip-title"></div>
-    <div class="tip-sample tip-row tabular-nums"></div>
-    <div class="tip-quartiles tip-row tabular-nums"></div>
-    <div class="tip-graduates tip-row text-small"></div>
-    <div class="tip-source tip-row text-small"></div>
-    <div class="tip-note tip-row text-small"></div>
+    <div class="tip-context text-small text-muted"></div>
+    <dl class="tip-stats tabular-nums"></dl>
+    <div class="tip-footer text-small text-muted">
+      <div class="tip-source"></div>
+      <div class="tip-period"></div>
+    </div>
   </div>
   <div class="sr-only selection-status" aria-live="polite"></div>
   <div class="text-small text-muted">UNCG sources: <a href="https://lehd.ces.census.gov/data/pseo/R2026Q2/nc/" target="_blank" rel="noopener noreferrer">Census PSEO R2026Q2 data</a> · <a href="https://lehd.ces.census.gov/data/pseo_documentation.html" target="_blank" rel="noopener noreferrer">Definitions</a> · <a href="https://catalog.uncg.edu/Archive/UGB_2017-2018.pdf#page=666" target="_blank" rel="noopener noreferrer">UNCG degree inventory</a></div>
   <div class="text-small text-muted">High school estimates: <a href="https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" target="_blank" rel="noopener noreferrer">Census 2019–2023 ACS microdata</a> · <a href="https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/PUMS_Data_Dictionary_2019-2023.pdf" target="_blank" rel="noopener noreferrer">Definitions</a></div>
   <details>
     <summary class="cursor-interaction">Notes on the data and boxes</summary>
+    <ul class="text-small data-group-notes"></ul>
     <ul class="text-small">
       <li>Left and right edges show the 25th and 75th earnings percentiles. The vertical mark shows the median. The lowest and highest 25% of earners are not drawn.</li>
-      <li>Colored marks identify four extreme box edges: red for the lowest floor and ceiling, green for the highest. Floor means the 25th percentile (solid line); ceiling means the 75th percentile (dashed line). These are quartile edges, not minimum or maximum individual earnings. Extremes use the entries drawn on this chart.</li>
+      <li>Colored marks identify four extreme box edges among UNCG degree programs: red for the lowest floor and ceiling, green for the highest. Floor means the 25th percentile (solid line); ceiling means the 75th percentile (dashed line). These are quartile edges, not minimum or maximum individual earnings. Extremes compare UNCG program boxes only; high school references are excluded.</li>
       <li>Box height is proportional to the full earnings sample count. It is not the count within the middle 50%. Box area does not represent a count, and the fill does not imply an even income distribution.</li>
       <li>Each entry occupies one row, sorted by median earnings from lowest to highest. All UNCG boxes use the same count-to-height scale. High school reference boxes have fixed height; their survey samples cannot be compared as graduation-cohort counts. Survey sample counts appear in the tooltip.</li>
       <li>PSEO covers UNCG graduates, not just federal-aid recipients. Earnings come from covered jobs nationwide, including most state and local government jobs and some federal jobs. Coverage excludes unincorporated self-employment, military service, and some other work. Graduates may still be enrolled in school.</li>
-      <li>The cohort graduated in 2016–2018. Year five is the fifth calendar year following each graduation year, so earnings are measured in 2021–2023 and adjusted to 2023 dollars. This is the latest UNCG cohort with published five-year outcomes in release R2026Q2.</li>
+      <li>The box cohort graduated in 2016–2018. Year five is the fifth calendar year following each graduation year, so box earnings are measured in 2021–2023 and adjusted to 2023 dollars. This is the latest UNCG cohort with published five-year outcomes in release R2026Q2.</li>
       <li>The earnings sample requires positive covered earnings in at least three quarters and annual earnings at least equivalent to full-time work at the federal minimum wage. It does not establish full-time employment.</li>
       <li>The residual category includes no observed employment and marginal employment: graduates who do not meet those earnings-sample requirements. It can include people in school, working in excluded jobs, or earning below the threshold. It is not an unemployment rate, and placement at $0 does not mean all had zero earnings.</li>
-      <li>Residual counts have lower fidelity than the boxes: PSEO publishes them only by two-digit broad field, while earnings boxes use four-digit program groups. Every row in a field repeats the same circle and count. These are shared field totals, not estimates for individual majors. Do not add the repeated circles or compare a program's box count with its field's circle count to infer an employment ratio.</li>
-      <li>Circle area is proportional to the shared field count on one scale. Its area cannot be compared with box height or box area. The circle tooltip shows a broad-field residual share: the employment-file residual count divided by its residual plus employed counts.</li>
+      <li>Residual counts have lower fidelity than the earnings boxes: PSEO publishes them only by two-digit broad field, while earnings boxes use four-digit program groups. Each purple box in a field uses the same residual-to-employed ratio. This is a shared field ratio, not a measured employment ratio for the individual major. Tooltips show the field totals; do not add totals repeated on several rows.</li>
+      <li>Purple height equals the blue box height multiplied by the field residual count divided by the field employed count. A 50% field residual share means equal residual and employed counts, so the boxes have equal heights. Purple height is not an observed program-level count. Both ratio counts come from the 2016–2018 employment file.</li>
+      <li>Purple boxes extend from $0 to the blue box's 25th-percentile edge only to join the marks. Their width and area do not represent an income distribution or a count. Some residual graduates earned money. A purple box is omitted when field counts are suppressed or when the row has only a pooled median circle.</li>
       <li>PSEO uses privacy protection that adds noise to counts and earnings. Earnings-file and employment-file counts are protected separately and may differ. Residual shares use both counts from the same employment-file row; we do not subtract an earnings count from IPEDS graduations to estimate residuals. Suppressed values remain missing.</li>
       <li>High school quartiles and medians are calculated together from 2019–2023 ACS public microdata: ages 25–34, regular high school diploma or GED only, civilian employed, no school attendance in the prior three months, and positive annual earnings. Both NC and national estimates use the same filters.</li>
       <li>Earnings include wages and net self-employment earnings (PERNP), adjusted to 2023 dollars with ADJINC. Percentiles use Census person weights (PWGTP): each is the first earnings value at which cumulative weight reaches 25%, 50%, or 75%. Values are rounded to the dollar. They are survey estimates; confidence intervals are not shown.</li>
       <li>High school references include currently employed adults with positive annual earnings. They do not apply PSEO's three-quarter employment or minimum-earnings requirements. They describe different populations and periods and do not measure the causal effect of earning a UNCG degree.</li>
       <li>PSEO earnings use four-digit program groups, which may combine several degrees. Names list degree matches from the UNCG inventory; quartiles apply to the whole reporting group, not separately to each listed degree. Graduates with multiple degrees can appear more than once. Do not sum rows to obtain a campus total.</li>
       <li>These are historical program outcomes, not a list of every degree offered today or a prediction of an individual student's earnings. The table keeps all source program groups, including suppressed groups.</li>
-      <li>Rows are sorted by median earnings from lowest to highest. Programs with suppressed quartiles appear last; a shared field circle may still be available for them. Missing counts are never drawn as zero.</li>
+      <li>Rows are sorted by the displayed median earnings from lowest to highest, including pooled-cohort circles. Programs without either median are omitted from the chart. Missing counts are never drawn as zero.</li>
     </ul>
   </details>
   <details>

@@ -5,23 +5,23 @@ const countFormatter = new Intl.NumberFormat('en-US');
 const money = value => value === null ? 'Suppressed' : moneyFormatter.format(value);
 const count = value => value === null ? 'Suppressed' : countFormatter.format(value);
 const hasBox = entry => [entry.earningsCount, entry.q1, entry.median, entry.q3].every(Number.isFinite) && entry.earningsCount > 0;
-const byMedian = (a, b) => (a.median ?? Infinity) - (b.median ?? Infinity) || a.label.localeCompare(b.label);
+const plottedMedian = entry => entry.median ?? entry.fallback?.median ?? null;
+const byMedian = (a, b) => (plottedMedian(a) ?? Infinity) - (plottedMedian(b) ?? Infinity) || a.label.localeCompare(b.label);
 const fields = new Map(earningsData.fields.map(field => [field.cip, field]));
 const programs = earningsData.programs.filter(hasBox);
-const observations = [...earningsData.programs, ...earningsData.references].sort(byMedian);
+const fallbackPrograms = earningsData.programs.filter(entry => entry.fallback);
+const omittedPrograms = earningsData.programs.filter(entry => plottedMedian(entry) === null);
+const observations = [...programs, ...fallbackPrograms, ...earningsData.references].sort(byMedian);
 const boxes = [...programs, ...earningsData.references];
 const heightScale = 54 / Math.max(...programs.map(program => program.earningsCount));
-const circleScale = 32 / Math.sqrt(Math.max(...earningsData.fields.map(field => field.residualCount ?? 0)));
-const circleSize = value => Math.sqrt(value) * circleScale;
-const lowest = Math.min(...boxes.map(entry => entry.q1));
 const highest = Math.max(...boxes.map(entry => entry.q3));
-const domain = { low: -highest * .16, high: highest * 1.06 };
+const domain = { low: 0, high: highest * 1.06 };
 const position = value => (value - domain.low) / (domain.high - domain.low) * 100;
 const extremes = [
-  { label: 'Lowest floor', field: 'q1', value: lowest, color: 'var(--red)' },
-  { label: 'Lowest ceiling', field: 'q3', value: Math.min(...boxes.map(entry => entry.q3)), color: 'var(--red)' },
-  { label: 'Highest floor', field: 'q1', value: Math.max(...boxes.map(entry => entry.q1)), color: 'var(--green)' },
-  { label: 'Highest ceiling', field: 'q3', value: highest, color: 'var(--green)' }
+  { label: 'Lowest floor', field: 'q1', value: Math.min(...programs.map(entry => entry.q1)), color: 'var(--red)' },
+  { label: 'Lowest ceiling', field: 'q3', value: Math.min(...programs.map(entry => entry.q3)), color: 'var(--red)' },
+  { label: 'Highest floor', field: 'q1', value: Math.max(...programs.map(entry => entry.q1)), color: 'var(--green)' },
+  { label: 'Highest ceiling', field: 'q3', value: Math.max(...programs.map(entry => entry.q3)), color: 'var(--green)' }
 ];
 const marks = new Map();
 const plots = [];
@@ -78,23 +78,17 @@ for (const [index, sampleCount] of [20, 100, 300].entries()) {
     svgElement('text', { x: 35 + index * 80, y: 70, 'text-anchor': 'middle' }, sampleCount)
   );
 }
-const circleKey = root.querySelector('.circle-key');
-circleKey.setAttribute('viewBox', '0 0 240 56');
-for (const [index, sampleCount] of [50, 150, 300].entries()) {
-  circleKey.append(
-    svgElement('circle', { cx: 35 + index * 80, cy: 19, r: circleSize(sampleCount) / 2 }),
-    svgElement('text', { x: 35 + index * 80, y: 52, 'text-anchor': 'middle' }, sampleCount)
-  );
-}
-
 for (const entry of observations) {
   const reference = entry.kind === 'reference';
   const field = fields.get(entry.cip.slice(0, 2));
   const available = reference || hasBox(entry);
   const boxHeight = reference ? 22 : available ? entry.earningsCount * heightScale : 0;
+  const residualHeight = hasBox(entry) && Number.isFinite(field?.residualCount) && field.observedCount > 0
+    ? boxHeight * (field.residualCount / field.observedCount)
+    : null;
   const row = element('div', 'chart-row');
   row.dataset.cip = entry.cip;
-  row.style.minHeight = `${Math.max(matchMedia('(pointer: coarse)').matches ? 44 : 36, boxHeight + 12)}px`;
+  row.style.minHeight = `${Math.max(matchMedia('(pointer: coarse)').matches ? 44 : 36, boxHeight + 12, (residualHeight ?? 0) + 12)}px`;
   const label = element('div', 'row-label');
   label.append(element('span', 'degree-name', reference ? `${entry.shortLabel} graduates` : entry.label));
   if (!reference) label.append(element('span', 'cip', `· ${entry.cip}`));
@@ -110,7 +104,7 @@ for (const entry of observations) {
     const median = element('span', 'median');
     median.style.left = `${entry.q3 === entry.q1 ? 50 : (entry.median - entry.q1) / (entry.q3 - entry.q1) * 100}%`;
     box.append(element('span', 'box-fill'), median);
-    for (const extreme of extremes.filter(extreme => entry[extreme.field] === extreme.value)) {
+    for (const extreme of extremes.filter(extreme => !reference && entry[extreme.field] === extreme.value)) {
       const edge = element('span', `extreme-line ${extreme.field === 'q3' ? 'ceiling' : 'floor'}`);
       edge.dataset.extreme = extreme.label;
       edge.dataset.value = extreme.value;
@@ -120,28 +114,46 @@ for (const entry of observations) {
     for (const mark of box.children) mark.setAttribute('aria-hidden', 'true');
     addMark(`${entry.cip}:box`, box, entry);
     plot.append(box);
-  } else {
-    const message = element('span', 'missing-quartiles text-muted', 'Quartiles suppressed');
-    message.style.left = `${position(0)}%`;
-    plot.append(message);
-  }
-  if (field && field.residualCount !== null) {
-    const circle = element('button', 'residual-hit');
-    circle.dataset.field = field.cip;
-    circle.style.left = `${position(0)}%`;
-    circle.style.setProperty('--circle-size', `${circleSize(field.residualCount)}px`);
-    circle.setAttribute('aria-label', `${entry.label}: shared UNCG field CIP ${field.cip}, ${field.label}. ${count(field.residualCount)} graduates with no observed or marginal employment, ${residualShare(field)} of the field employment counts. This is not a program-level count or zero earnings.`);
-    const fill = element('span', 'residual-fill');
+  } else if (entry.fallback) {
+    const circle = element('button', 'median-hit');
+    circle.style.left = `${position(entry.fallback.median)}%`;
+    circle.setAttribute('aria-label', `${entry.label}: median ${money(entry.fallback.median)}. ${entry.fallback.source}, ${entry.fallback.cohort} graduates, year five. Circle size is fixed.`);
+    const fill = element('span', 'median-fill');
     fill.setAttribute('aria-hidden', 'true');
     circle.append(fill);
-    addMark(`${entry.cip}:residual`, circle, field, true);
+    addMark(`${entry.cip}:median`, circle, entry);
     plot.append(circle);
+  }
+  if (residualHeight !== null) {
+    const box = element('button', 'box-hit residual-hit');
+    box.dataset.field = field.cip;
+    box.style.left = `${position(0)}%`;
+    box.style.width = `${position(entry.q1) - position(0)}%`;
+    box.style.setProperty('--box-height', `${residualHeight}px`);
+    box.style.setProperty('--box-color', 'var(--residual)');
+    box.setAttribute('aria-label', `${entry.label}: shared UNCG field CIP ${field.cip}, ${field.label}. ${count(field.residualCount)} graduates with no observed or marginal employment and ${count(field.observedCount)} employed graduates. Purple-to-blue height ratio uses these field counts, not counts for this individual major. The horizontal span does not represent earnings.`);
+    const fill = element('span', 'box-fill');
+    fill.setAttribute('aria-hidden', 'true');
+    box.append(fill);
+    addMark(`${entry.cip}:residual`, box, field, true);
+    plot.append(box);
   }
   row.append(label, plot);
   root.querySelector('.chart-rows').append(row);
 }
 
-root.querySelector('.program-summary').textContent = `${programs.length} UNCG program boxes · ${earningsData.references.length} high school boxes · ${earningsData.programs.length - programs.length} program groups with suppressed quartiles · shared field circles repeated on program rows`;
+root.querySelector('.program-summary').textContent = `${programs.length} UNCG program boxes · ${fallbackPrograms.length} pooled-cohort median circles · ${earningsData.references.length} high school boxes · ${omittedPrograms.length} unavailable program groups omitted`;
+
+const programNames = entries => entries.map(entry => `${entry.label} (CIP ${entry.cip})`).join('; ');
+for (const [label, description] of [
+  ['Main data:', `${programs.length} UNCG program groups use PSEO quartiles for ${earningsData.cohort} graduates, measured at year five in ${earningsData.earningsYears}. Boxes use this cohort only.`],
+  ['Pooled data:', `${fallbackPrograms.length} groups use PSEO's published median across all available five-year cohorts (2001–2018 graduates; 2006–2023 earnings, adjusted to 2023 dollars). Teal circles have fixed size; their area does not represent a count. The employment rules and nationwide coverage match the main PSEO data, but the periods differ. ${programNames(fallbackPrograms)}.`],
+  ['Unavailable data:', `${omittedPrograms.length} groups have no published five-year median in either PSEO cohort selection. They are omitted from the chart and retained in the table: ${programNames(omittedPrograms)}.`]
+]) {
+  const note = element('li');
+  note.append(element('strong', '', `${label} `), description);
+  root.querySelector('.data-group-notes').append(note);
+}
 
 for (const [entries, selector, counts] of [
   [earningsData.programs, '.program-table tbody', ['earningsCount']],
@@ -152,8 +164,9 @@ for (const [entries, selector, counts] of [
     const name = element('th');
     name.scope = 'row';
     name.append(element('div', '', entry.label), element('div', 'text-small text-muted', `CIP ${entry.cip} · ${entry.source}`));
+    if (entry.fallback) name.append(element('div', 'text-small text-muted', `Median: pooled ${entry.fallback.cohort} cohorts. Other columns: ${earningsData.cohort} cohort.`));
     row.append(name);
-    for (const key of ['q1', 'median', 'q3']) row.append(element('td', 'text-end text-nowrap tabular-nums', money(entry[key])));
+    for (const key of ['q1', 'median', 'q3']) row.append(element('td', 'text-end text-nowrap tabular-nums', money(key === 'median' ? plottedMedian(entry) : entry[key])));
     for (const key of counts) row.append(element('td', 'text-end tabular-nums', count(entry[key])));
     if (entry.kind === 'field') row.append(element('td', 'text-end tabular-nums', residualShare(entry)));
     root.querySelector(selector).append(row);
@@ -166,7 +179,7 @@ function positionTooltip() {
   const rootRect = root.getBoundingClientRect();
   const markRect = active.node.getBoundingClientRect();
   const tipRect = tooltip.getBoundingClientRect();
-  const fraction = active.residual || active.entry.q3 === active.entry.q1 ? .5 : (active.entry.median - active.entry.q1) / (active.entry.q3 - active.entry.q1);
+  const fraction = active.residual || active.entry.fallback || active.entry.q3 === active.entry.q1 ? .5 : (active.entry.median - active.entry.q1) / (active.entry.q3 - active.entry.q1);
   const anchorX = markRect.left - rootRect.left + markRect.width * fraction;
   tooltip.style.left = `${Math.max(8, Math.min(rootRect.width - tipRect.width - 8, anchorX - tipRect.width / 2))}px`;
   tooltip.style.top = `${Math.max(0, markRect.top - rootRect.top - tipRect.height - 12)}px`;
@@ -183,12 +196,29 @@ function showEntry(key) {
   if (!active) return;
   const { entry, residual } = active;
   const reference = entry.kind === 'reference';
-  tooltip.querySelector('.tip-title').textContent = residual ? `${entry.label} · shared field CIP ${entry.cip}` : entry.label;
-  tooltip.querySelector('.tip-sample').textContent = residual ? `${count(entry.residualCount)} no observed / marginal employment · ${residualShare(entry)} of field counts` : reference ? `${count(entry.sampleCount)} survey records · fixed box height` : `${count(entry.earningsCount)} graduates in the earnings sample`;
-  tooltip.querySelector('.tip-quartiles').textContent = residual ? `${count(entry.observedCount)} employed graduates in the same field (employment file)` : `${money(entry.q1)} · ${money(entry.median)} · ${money(entry.q3)} (25th · median · 75th)`;
-  tooltip.querySelector('.tip-graduates').textContent = residual ? 'Shared by all rows with this two-digit CIP. Not a count for this individual major.' : reference ? 'Ages 25–34; high school diploma or GED only; civilian employed, positive earnings, no school enrollment.' : 'Covered earnings in at least three quarters, meeting the annual minimum-earnings threshold. May still be enrolled.';
-  tooltip.querySelector('.tip-source').textContent = reference ? 'Census ACS 2019–2023 · weighted estimates · 2023 dollars' : `Census PSEO ${earningsData.release} · CIP ${entry.cip} · ${earningsData.cohort} graduates, year 5`;
-  tooltip.querySelector('.tip-note').textContent = residual ? 'Circle at $0 is a count marker, not an earnings estimate. Includes excluded jobs, no observed work, and low or intermittent earnings. Counts are privacy protected; do not add repeated circles.' : reference ? 'Different employment filters from PSEO. Survey sample counts are not graduation-cohort counts.' : `${entry.source}. Quartiles apply to the whole four-digit group. ${earningsData.earningsYears} earnings in 2023 dollars; counts and earnings are privacy protected.`;
+  const fallback = entry.fallback;
+  const stats = residual ? [
+    ['No observed / marginal employment', count(entry.residualCount)],
+    ['Employed', count(entry.observedCount)],
+    ['Residual share', residualShare(entry)]
+  ] : [
+    ...(fallback ? [['Median', money(fallback.median)]] : [
+      ['25th percentile', money(entry.q1)],
+      ['Median', money(entry.median)],
+      ['75th percentile', money(entry.q3)]
+    ]),
+    [reference ? 'Survey records' : 'Graduates in sample', count(reference ? entry.sampleCount : (fallback ?? entry).earningsCount)]
+  ];
+  tooltip.querySelector('.tip-title').textContent = entry.label;
+  tooltip.querySelector('.tip-context').textContent = residual ? `Shared field · CIP ${entry.cip}`
+    : reference ? 'Ages 25–34 · employed, not enrolled'
+    : `${fallback ? 'Pooled program group' : 'Program group'} · CIP ${entry.cip}`;
+  const details = tooltip.querySelector('.tip-stats');
+  details.replaceChildren();
+  for (const [label, value] of stats) details.append(element('dt', '', label), element('dd', '', value));
+  tooltip.querySelector('.tip-source').textContent = reference ? 'Census ACS' : 'Census PSEO';
+  tooltip.querySelector('.tip-period').textContent = reference ? `${entry.period} survey`
+    : `${(fallback ?? earningsData).cohort} graduates · year ${earningsData.yearsAfterGraduation}`;
   positionTooltip();
 }
 

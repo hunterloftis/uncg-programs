@@ -61,7 +61,7 @@ const earningsData = {
     },
     {
       "cip": "13.13",
-      "label": "Art Education (K-12) (BFA) / English, Secondary Education (BA) / Music Education (BM) / Physical Education, Teacher Education (B.S.) / Secondary education: Geography / Political Science / Psychology / Sociology (B.A.) / History, Secondary Education (BA) / Theater Arts Education (BFA)",
+      "label": "Art Education (K-12) (BFA) / English, Secondary Education (BA) / Music Education (BM) / Physical Education, Teacher Education (K-12) (BS) / Secondary education: Geography / Political Science / Psychology / Sociology (B.A.) / History, Secondary Education (BA) / Theater Arts Education (BFA)",
       "source": "Teacher Education and Professional Development, Specific Subject Areas",
       "q1": 43271,
       "median": 52080,
@@ -84,7 +84,14 @@ const earningsData = {
       "q1": null,
       "median": null,
       "q3": null,
-      "earningsCount": null
+      "earningsCount": null,
+      "fallback": {
+        "median": 45751,
+        "earningsCount": 44,
+        "source": "Census PSEO: pooled cohorts",
+        "cohort": "2001–2018",
+        "earningsYears": "2006–2023"
+      }
     },
     {
       "cip": "16.09",
@@ -102,7 +109,14 @@ const earningsData = {
       "q1": null,
       "median": null,
       "q3": null,
-      "earningsCount": null
+      "earningsCount": null,
+      "fallback": {
+        "median": 46273,
+        "earningsCount": 126,
+        "source": "Census PSEO: pooled cohorts",
+        "cohort": "2001–2018",
+        "earningsYears": "2006–2023"
+      }
     },
     {
       "cip": "19.07",
@@ -219,7 +233,14 @@ const earningsData = {
       "q1": null,
       "median": null,
       "q3": null,
-      "earningsCount": null
+      "earningsCount": null,
+      "fallback": {
+        "median": 48238,
+        "earningsCount": 112,
+        "source": "Census PSEO: pooled cohorts",
+        "cohort": "2001–2018",
+        "earningsYears": "2006–2023"
+      }
     },
     {
       "cip": "38.02",
@@ -228,7 +249,14 @@ const earningsData = {
       "q1": null,
       "median": null,
       "q3": null,
-      "earningsCount": null
+      "earningsCount": null,
+      "fallback": {
+        "median": 47616,
+        "earningsCount": 139,
+        "source": "Census PSEO: pooled cohorts",
+        "cohort": "2001–2018",
+        "earningsYears": "2006–2023"
+      }
     },
     {
       "cip": "40.05",
@@ -246,7 +274,14 @@ const earningsData = {
       "q1": null,
       "median": null,
       "q3": null,
-      "earningsCount": null
+      "earningsCount": null,
+      "fallback": {
+        "median": 60738,
+        "earningsCount": 45,
+        "source": "Census PSEO: pooled cohorts",
+        "cohort": "2001–2018",
+        "earningsYears": "2006–2023"
+      }
     },
     {
       "cip": "42.01",
@@ -313,7 +348,7 @@ const earningsData = {
     },
     {
       "cip": "50.03",
-      "label": "Dance Studies (B.A.) / Dance (B.F.A.)",
+      "label": "Dance Studies (BA) / Dance, Choreography and Performance (BFA)",
       "source": "Dance",
       "q1": 26921,
       "median": 41695,
