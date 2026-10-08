@@ -19,7 +19,7 @@ Open `index.html` in a browser. Hover or focus a box, circle, or share cell to s
 UNCG uses [Census PSEO release R2026Q2](https://lehd.ces.census.gov/data/pseo/R2026Q2/nc/), bachelor’s graduates, five years after graduation. All earnings are in 2023 dollars. The program data have three groups:
 
 - **Main data:** 42 four-digit program groups have published quartiles for 2016–2018 graduates, measured in 2021–2023. They appear as boxes.
-- **Pooled data:** five groups have no median for that cohort but have a published median across all available five-year cohorts: 2001–2018 graduates, measured in 2006–2023. They appear as teal median circles: Germanic languages (16.05), Classical Studies (16.12), Philosophy (38.01), Religious Studies (38.02), and Physics (40.08).
+- **Pooled data:** five groups have no median for that cohort but have a published median across all available five-year cohorts: 2001–2018 graduates, measured in 2006–2023. They appear as blue median circles: Germanic languages (16.05), Classical Studies (16.12), Philosophy (38.01), Religious Studies (38.02), and Physics (40.08).
 - **Unavailable data:** Languages, Literatures, and Cultures (16.01), Peace and Conflict Studies (30.05), other interdisciplinary studies (30.99), and Arts Administration (50.10) have suppressed five-year medians in both selections. They remain in the table and are omitted from the chart.
 
 Residual counts are published for 19 of 21 two-digit broad fields and always use the 2016–2018 cohort.
@@ -53,13 +53,13 @@ The script reads all four national person CSV parts and derives both geographic 
 
 Box edges show the 25th and 75th percentiles; the internal line shows the median. UNCG box height is proportional to the earnings sample count. High school boxes have fixed height. Red and green marks identify the lowest and highest quartile edges among UNCG program boxes. High school references are excluded. UNCG rows group by two-digit field code; fields sort by their lowest displayed median. Rows within each field sort by the displayed median, including pooled circles. High school references appear first.
 
-Teal circles have fixed size. Their position is the pooled median; their area does not represent a count. Pooled quartiles are available in the source but are not drawn. Tooltips name the cohort and sample count. The program table uses a pooled median where available and labels it; other columns still describe the main cohort. The pooled earnings rules and nationwide coverage match the main PSEO data, but the periods differ.
+Blue circles have fixed size. Their position is the pooled median; their area does not represent a count. Pooled quartiles are available in the source but are not drawn. Tooltips name the cohort and sample count. The program table uses a pooled median where available and labels it; other columns still describe the main cohort. The pooled earnings rules and nationwide coverage match the main PSEO data, but the periods differ.
 
-One “Employed above earnings cutoff” cell spans all displayed program rows in each broad field. The share is the field employed count divided by the sum of its residual and employed counts. Qualifying graduates meet PSEO’s annual earnings cutoff and three-quarter employment test. Both counts come from the 2016–2018 employment file, including beside pooled median circles. A dash means the field counts are suppressed.
+One “Employed above threshold” cell spans all displayed program rows in each broad field. The share is the field employed count divided by the sum of its residual and employed counts. Qualifying graduates meet PSEO’s annual earnings cutoff and three-quarter employment test. Both counts come from the 2016–2018 employment file, including beside pooled median circles. A dash means the field counts are suppressed.
 
 **This is a shared field share, not a measured share for the individual major.** Tooltips show the field totals. Do not divide a field's residual count by a program's earnings count.
 
-Each high school reference has its own “Employed above earnings cutoff” cell: weighted population at or above the cutoff divided by the full weighted base. “Above” includes earnings exactly at the cutoff. Tooltips and the high school table label these as ACS estimates and show the cutoff and counts. The high school measure cannot reproduce PSEO’s quarterly employment test or job coverage; current employment status is not required.
+Each high school reference has its own “Employed above threshold” cell: weighted population at or above the cutoff divided by the full weighted base. “Above” includes earnings exactly at the cutoff. Tooltips and the high school table label these as ACS estimates and show the cutoff and counts. The high school measure cannot reproduce PSEO’s quarterly employment test or job coverage; current employment status is not required.
 
 ## Static hosting
 

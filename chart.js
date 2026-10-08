@@ -25,10 +25,10 @@ const highest = Math.max(...boxes.map(entry => entry.q3));
 const domain = { low: 0, high: highest * 1.06 };
 const position = value => (value - domain.low) / (domain.high - domain.low) * 100;
 const extremes = [
-  { label: 'Lowest floor', field: 'q1', value: Math.min(...programs.map(entry => entry.q1)), color: 'var(--red)' },
-  { label: 'Lowest ceiling', field: 'q3', value: Math.min(...programs.map(entry => entry.q3)), color: 'var(--red)' },
-  { label: 'Highest floor', field: 'q1', value: Math.max(...programs.map(entry => entry.q1)), color: 'var(--green)' },
-  { label: 'Highest ceiling', field: 'q3', value: Math.max(...programs.map(entry => entry.q3)), color: 'var(--green)' }
+  { label: 'Low floor', field: 'q1', value: Math.min(...programs.map(entry => entry.q1)), color: 'var(--red)' },
+  { label: 'Low ceiling', field: 'q3', value: Math.min(...programs.map(entry => entry.q3)), color: 'var(--red)' },
+  { label: 'High floor', field: 'q1', value: Math.max(...programs.map(entry => entry.q1)), color: 'var(--green)' },
+  { label: 'High ceiling', field: 'q3', value: Math.max(...programs.map(entry => entry.q3)), color: 'var(--green)' }
 ];
 const marks = new Map();
 const plots = [];
@@ -69,14 +69,12 @@ function addMark(key, node, entry, shareCell = false) {
 }
 
 for (const extreme of extremes) {
-  const item = element('div', 'legend-item');
-  const label = element('dt');
+  const label = element('span');
   const swatch = element('span', `extreme-key ${extreme.field === 'q3' ? 'ceiling' : 'floor'}`);
   swatch.style.setProperty('--edge-color', extreme.color);
   swatch.setAttribute('aria-hidden', 'true');
-  label.append(swatch, `${extreme.label} ${money(extreme.value)}`);
-  item.append(label);
-  root.querySelector('.extreme-legend').append(item);
+  label.append(swatch, extreme.label);
+  root.querySelector('.extreme-legend').append(label);
 }
 
 const heightKey = root.querySelector('.height-key');
@@ -101,7 +99,7 @@ for (const { field, entries } of groups) {
   );
   cell.setAttribute('aria-label', reference
     ? `${field.label}: ${share} with annual wage-and-salary earnings at or above ${earningsCutoff(field)}. ACS estimate, ${field.period}.`
-    : `CIP ${field.cip}, ${field.label}: ${share} employed above earnings cutoff, meeting annual and quarterly covered-earnings requirements. Shared field share for ${earningsData.cohort} graduates, not an individual major's employment rate.`);
+    : `CIP ${field.cip}, ${field.label}: ${share} employed above threshold, meeting annual and quarterly covered-earnings requirements. Shared field share for ${earningsData.cohort} graduates, not an individual major's employment rate.`);
   addMark(`${field.cip}:share`, cell, field, true);
   group.append(cell);
   for (const entry of entries) {
@@ -157,7 +155,7 @@ root.querySelector('.program-summary').textContent = `${programs.length} UNCG pr
 const programNames = entries => entries.map(entry => `${entry.label} (CIP ${entry.cip})`).join('; ');
 for (const [label, description] of [
   ['Main data:', `${programs.length} UNCG program groups use PSEO quartiles for ${earningsData.cohort} graduates, measured at year five in ${earningsData.earningsYears}. Boxes use this cohort only.`],
-  ['Pooled data:', `${fallbackPrograms.length} groups use PSEO's published median across all available five-year cohorts (2001–2018 graduates; 2006–2023 earnings, adjusted to 2023 dollars). Teal circles have fixed size; their area does not represent a count. The employment rules and nationwide coverage match the main PSEO data, but the periods differ. ${programNames(fallbackPrograms)}.`],
+  ['Pooled data:', `${fallbackPrograms.length} groups use PSEO's published median across all available five-year cohorts (2001–2018 graduates; 2006–2023 earnings, adjusted to 2023 dollars). Blue circles have fixed size; their area does not represent a count. The employment rules and nationwide coverage match the main PSEO data, but the periods differ. ${programNames(fallbackPrograms)}.`],
   ['Unavailable data:', `${omittedPrograms.length} groups have no published five-year median in either PSEO cohort selection. They are omitted from the chart and retained in the table: ${programNames(omittedPrograms)}.`]
 ]) {
   const note = element('li');
@@ -219,12 +217,12 @@ function showEntry(key) {
   const stats = shareCell && reference ? [
     ['At or above nominal wage cutoff', count(entry.observedCount)],
     ['Below nominal wage cutoff', count(entry.residualCount)],
-    ['Employed above earnings cutoff', employmentShare(entry)],
+    ['Employed above threshold', employmentShare(entry)],
     ['Survey records (all)', count(entry.totalSampleCount)]
   ] : shareCell ? [
     ['Meets annual and quarterly earnings rules', count(entry.observedCount)],
     ['No observed / marginal employment', count(entry.residualCount)],
-    ['Employed above earnings cutoff', employmentShare(entry)]
+    ['Employed above threshold', employmentShare(entry)]
   ] : [
     ...(fallback ? [['Median', money(fallback.median)]] : [
       ['25th percentile', money(entry.q1)],

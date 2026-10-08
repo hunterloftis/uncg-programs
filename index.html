@@ -17,37 +17,38 @@
       <span>Annual earnings in 2023 dollars</span>
     </div>
   </header>
-  <dl class="legend text-small" aria-label="Chart marks and limitations">
-    <div class="legend-item">
-      <dt><span class="swatch" aria-hidden="true"></span>UNCG earnings</dt>
-      <dd>Middle 50% of earnings five years after graduation (2016–2018 graduates). Excludes low or intermittent covered earnings; may include students.</dd>
+  <div class="sticky-legend text-small" role="group" aria-label="Chart marks">
+    <span class="earnings-key"><span class="text-nowrap" aria-hidden="true"><span class="swatch"></span><span class="swatch" style="background:var(--nc)"></span><span class="swatch" style="background:var(--us)"></span></span>Earnings (middle 50% range, height shows sample count)</span>
+    <div class="extreme-legend tabular-nums" role="group" aria-label="Median and lowest and highest UNCG degree-program quartile edges" tabindex="0"><span><span class="median-key" aria-hidden="true"></span>Median</span></div>
+    <span class="pooled-key"><span class="swatch circle-swatch" aria-hidden="true"></span>Earnings (pooled median, low sample count)</span>
+  </div>
+  <div class="legend text-small" role="group" aria-label="Chart explanations and limitations">
+    <div class="legend-item" role="group" aria-labelledby="uncg-earnings-key">
+      <h2 id="uncg-earnings-key">UNCG earnings</h2>
+      <p>Middle 50% of earnings five years after graduation (2016–2018 graduates). Excludes low or intermittent covered earnings; may include students.</p>
+      <p>Box height shows the earnings sample count. High school box heights do not show counts.</p>
+      <p><svg class="height-key" role="img" aria-label="Box heights for 20, 100, and 300 graduates; height is proportional to the count"></svg></p>
+    </div>
+    <div class="legend-item" role="group" aria-labelledby="pooled-median-key">
+      <h2 id="pooled-median-key">Pooled median</h2>
+      <p>Some data sources do not provide enough information to show earnings ranges. Circles show pooled medians for programs without a range for the 2016–2018 cohort.</p>
+      <p>Five-year median for 2001–2018 graduates; earnings measured in 2006–2023. Circle size does not show a count.</p>
+    </div>
+    <div class="legend-item" role="group" aria-labelledby="high-school-key">
+      <h2 id="high-school-key">US and NC high school earnings</h2>
+      <p>Middle 50% of ACS wages (2019–2023): ages 25–34, diploma/GED only, not enrolled, annual wages of at least $12,687.50 before inflation adjustment.</p>
     </div>
     <div class="legend-item">
-      <dt><span class="median-key" aria-hidden="true"></span>Median</dt>
+      <h2>Employed above threshold</h2>
+      <p>UNCG: share of 2016–2018 graduates by broad field, not individual major. Requires the annual cutoff and earnings in at least three quarters. High school: share meeting the annual wage cutoff only; current employment is not required.</p>
     </div>
     <div class="legend-item">
-      <dt><span class="swatch circle-swatch" style="background:var(--pooled)" aria-hidden="true"></span>Pooled UNCG median</dt>
-      <dd>Five-year median for 2001–2018 graduates; earnings measured in 2006–2023. Circle size does not show a count.</dd>
+      <h2>UNCG quartile extremes</h2>
+      <p>Floor = 25th percentile; ceiling = 75th. Excludes high school and pooled medians.</p>
     </div>
-    <div class="legend-item">
-      <dt><span class="swatch" style="background:var(--nc)" aria-hidden="true"></span>NC high school earnings</dt>
-      <dt><span class="swatch" style="background:var(--us)" aria-hidden="true"></span>U.S. high school earnings</dt>
-      <dd>Middle 50% of ACS wages (2019–2023): ages 25–34, diploma/GED only, not enrolled, annual wages of at least $12,687.50 before inflation adjustment.</dd>
-    </div>
-    <div class="legend-item">
-      <dt>Employed above earnings cutoff</dt>
-      <dd>UNCG: share of 2016–2018 graduates by broad field, not individual major. Requires the annual cutoff and earnings in at least three quarters. High school: share meeting the annual wage cutoff only; current employment is not required.</dd>
-    </div>
-    <div class="legend-item">
-      <dt>UNCG sample size</dt>
-      <dd>Box height shows the earnings sample count. High school box heights do not show counts.</dd>
-      <dd><svg class="height-key" role="img" aria-label="Box heights for 20, 100, and 300 graduates; height is proportional to the count"></svg></dd>
-    </div>
-  </dl>
-  <p class="text-small text-muted">UNCG quartile extremes: floor = 25th percentile; ceiling = 75th. Excludes high school and pooled medians.</p>
-  <dl class="legend extreme-legend text-small tabular-nums" aria-label="Lowest and highest UNCG degree-program quartile edges"></dl>
+  </div>
   <section class="chart program-chart" aria-label="UNCG program earnings quartiles grouped by field, shared employment shares above the earnings cutoff, and high school references">
-    <div class="axis-row"><span class="axis-caption">Degree · CIP</span><div class="axis top-axis" aria-hidden="true"></div><span class="axis-caption share-caption">Employed above earnings cutoff</span></div>
+    <div class="axis-row chart-header"><span class="axis-caption">Degree · CIP</span><div class="axis top-axis" aria-hidden="true"></div><span class="axis-caption share-caption">Employed above threshold</span></div>
     <div class="chart-rows"></div>
     <div class="axis-row"><span></span><div class="axis bottom-axis" aria-hidden="true"></div><span></span></div>
     <div class="axis-row"><span></span><div class="axis-caption axis-label">Annual earnings (2023 USD)</div><span></span></div>
@@ -78,7 +79,7 @@
       <li>The earnings sample requires positive covered earnings in at least three quarters and annual earnings at least equivalent to full-time work at the federal minimum wage. It does not establish full-time employment.</li>
       <li>The UNCG residual category includes no observed employment and marginal employment: graduates who do not meet those earnings-sample requirements. It can include people in school, working in excluded jobs, or earning below the threshold. It is not an unemployment rate and does not mean all had zero earnings.</li>
       <li>PSEO publishes employment counts by two-digit broad field and earnings by four-digit program group. The employment share applies to the field, not each major.</li>
-      <li>The UNCG share employed above earnings cutoff equals the field employed count divided by the sum of its residual and employed counts. Both counts come from the 2016–2018 employment file, including beside pooled median circles. A dash means the field counts are suppressed.</li>
+      <li>The UNCG share employed above threshold equals the field employed count divided by the sum of its residual and employed counts. Both counts come from the 2016–2018 employment file, including beside pooled median circles. A dash means the field counts are suppressed.</li>
       <li>PSEO adds noise to protect privacy. Earnings-file and employment-file counts are protected separately and may differ. Employment shares use counts from the same employment-file row.</li>
       <li>High school estimates use 2019–2023 ACS public microdata: civilians aged 25–34, regular high school diploma or GED only, and no school attendance in the prior three months. The base includes employed people, unemployed people, and people outside the labor force. Both NC and national estimates use the same filters.</li>
       <li>High school earnings boxes cover wage-and-salary income of at least $12,687.50 before inflation adjustment. The cutoff is 35 hours × 50 weeks × $7.25, following the <a href="https://lehd.ces.census.gov/doc/PSEOTechnicalDocumentation.pdf#page=6" target="_blank" rel="noopener noreferrer">PSEO technical guide (June 2023)</a>. The federal minimum wage was $7.25 throughout 2019–2023. The below-cutoff group covers wages below the cutoff, including zero. “Above earnings cutoff” includes earnings exactly at the cutoff. Each person belongs to exactly one group; current employment status does not determine the group. The threshold does not establish full-time employment.</li>
@@ -102,7 +103,7 @@
     <summary>Broad-field data</summary>
     <div class="table-responsive">
       <table class="field-table">
-        <thead><tr><th scope="col">UNCG broad field</th><th scope="col" class="text-end">25th</th><th scope="col" class="text-end">Median</th><th scope="col" class="text-end">75th</th><th scope="col" class="text-end">Earnings sample</th><th scope="col" class="text-end">Employed (flows)</th><th scope="col" class="text-end">No observed / marginal employment</th><th scope="col" class="text-end">Employed above earnings cutoff</th></tr></thead>
+        <thead><tr><th scope="col">UNCG broad field</th><th scope="col" class="text-end">25th</th><th scope="col" class="text-end">Median</th><th scope="col" class="text-end">75th</th><th scope="col" class="text-end">Earnings sample</th><th scope="col" class="text-end">Employed (flows)</th><th scope="col" class="text-end">No observed / marginal employment</th><th scope="col" class="text-end">Employed above threshold</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -112,7 +113,7 @@
     <p class="text-small">Population counts use survey weights; survey record counts are unweighted and include people below the cutoff.</p>
     <div class="table-responsive">
       <table class="reference-table">
-        <thead><tr><th scope="col">High school reference</th><th scope="col" class="text-end">25th</th><th scope="col" class="text-end">Median</th><th scope="col" class="text-end">75th</th><th scope="col" class="text-end">People at or above cutoff</th><th scope="col" class="text-end">People below cutoff</th><th scope="col" class="text-end">Employed above earnings cutoff</th><th scope="col" class="text-end">Survey records (all)</th></tr></thead>
+        <thead><tr><th scope="col">High school reference</th><th scope="col" class="text-end">25th</th><th scope="col" class="text-end">Median</th><th scope="col" class="text-end">75th</th><th scope="col" class="text-end">People at or above cutoff</th><th scope="col" class="text-end">People below cutoff</th><th scope="col" class="text-end">Employed above threshold</th><th scope="col" class="text-end">Survey records (all)</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
