@@ -41,8 +41,8 @@ a { color: var(--college); }
 .box-hit { position: absolute; top: 0; height: 100%; border: 0; padding: 0; background: transparent; cursor: pointer; color: inherit; font: inherit; }
 .box-fill { position: absolute; top: 50%; left: 0; width: 100%; height: var(--box-height); transform: translateY(-50%); background: var(--box-color); opacity: .55; pointer-events: none; }
 .box-hit.is-selected .box-fill { opacity: 1; }
-.median { position: absolute; top: 50%; height: max(6px, var(--box-height)); border-left: 1.5px solid var(--foreground); transform: translateY(-50%); pointer-events: none; }
-.extreme-line { position: absolute; top: 50%; height: max(10px, var(--box-height)); border-left: 2px solid var(--edge-color); transform: translateY(-50%); pointer-events: none; }
+.median { position: absolute; top: 50%; height: max(6px, var(--box-height)); border-left: 3px solid var(--foreground); transform: translateY(-50%); pointer-events: none; }
+.extreme-line { position: absolute; top: 50%; height: max(10px, var(--box-height)); border-left: 4px solid var(--edge-color); transform: translateY(-50%); pointer-events: none; }
 .floor { left: 0; }
 .extreme-line.ceiling { right: 0; border-left-style: dashed; }
 .axis { position: relative; height: 32px; }
