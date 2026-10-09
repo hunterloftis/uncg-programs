@@ -85,7 +85,8 @@ function addTooltip(key, node, entry, shareCell = false) {
     : `${fallback ? 'Pooled program group' : 'Program group'} · CIP ${entry.cip}`;
   const details = tooltip.querySelector('.tip-stats');
   for (const [label, value] of stats) details.append(element('dt', '', label), element('dd', '', value));
-  tooltip.querySelector('.tip-source').textContent = reference ? `Census ACS · ${entry.dollarsYear} dollars` : 'Census PSEO';
+  tooltip.querySelector('.tip-source').textContent = reference ? 'Source: Census ACS PUMS'
+    : `Source: Census PSEO ${earningsData.release} · ${shareCell ? 'field employment' : fallback ? 'pooled program earnings' : 'program earnings'}`;
   tooltip.querySelector('.tip-period').textContent = reference ? `${entry.period} survey`
     : `${(fallback ?? earningsData).cohort} graduates · year ${earningsData.yearsAfterGraduation}`;
   return tooltip;
@@ -133,7 +134,7 @@ for (const { field, entries } of groups) {
       box.style.left = `${position(entry.q1)}%`;
       box.style.width = `${position(entry.q3) - position(entry.q1)}%`;
       box.style.setProperty('--box-height', `${boxHeight}px`);
-      box.style.setProperty('--box-color', reference ? entry.cip === 'hs-nc' ? 'var(--nc)' : 'var(--us)' : 'var(--college)');
+      box.style.setProperty('--box-color', reference ? 'var(--high-school)' : 'var(--college)');
       const median = element('span', 'median');
       median.style.left = `${entry.q3 === entry.q1 ? 50 : (entry.median - entry.q1) / (entry.q3 - entry.q1) * 100}%`;
       box.append(element('span', 'box-fill'), median);
@@ -167,41 +168,11 @@ const programNames = entries => entries.map(entry => `${entry.label} (CIP ${entr
 for (const [label, description] of [
   ['Main data:', `${programs.length} UNCG program groups use PSEO quartiles for ${earningsData.cohort} graduates, measured at year five in ${earningsData.earningsYears}. Boxes use this cohort only.`],
   ['Pooled data:', `${fallbackPrograms.length} groups use PSEO's published median across all available five-year cohorts (2001–2018 graduates; 2006–2023 earnings, adjusted to 2023 dollars). Blue circles have fixed size; their area does not represent a count. The employment rules and nationwide coverage match the main PSEO data, but the periods differ. ${programNames(fallbackPrograms)}.`],
-  ['Unavailable data:', `${omittedPrograms.length} groups have no published five-year median in either PSEO cohort selection. They are omitted from the chart and retained in the table: ${programNames(omittedPrograms)}.`]
+  ['Unavailable data:', `${omittedPrograms.length} groups have no published five-year median in either PSEO cohort selection and are omitted from the chart: ${programNames(omittedPrograms)}.`]
 ]) {
   const note = element('li');
   note.append(element('strong', '', `${label} `), description);
   root.querySelector('.data-group-notes').append(note);
-}
-
-for (const [entries, selector, counts] of [
-  [earningsData.programs, '.program-table tbody', ['earningsCount']],
-  [earningsData.fields, '.field-table tbody', ['earningsCount', 'observedCount', 'residualCount']]
-]) {
-  for (const entry of [...entries].sort((a, b) => a.label.localeCompare(b.label))) {
-    const row = element('tr');
-    const name = element('th');
-    name.scope = 'row';
-    name.append(element('div', '', entry.label), element('div', 'text-small text-muted', `CIP ${entry.cip} · ${entry.source}`));
-    if (entry.fallback) name.append(element('div', 'text-small text-muted', `Median: pooled ${entry.fallback.cohort} cohorts. Other columns: ${earningsData.cohort} cohort.`));
-    row.append(name);
-    for (const key of ['q1', 'median', 'q3']) row.append(element('td', 'text-end text-nowrap tabular-nums', money(key === 'median' ? plottedMedian(entry) : entry[key])));
-    for (const key of counts) row.append(element('td', 'text-end tabular-nums', count(entry[key])));
-    if (entry.kind === 'field') row.append(element('td', 'text-end tabular-nums', employmentShare(entry)));
-    root.querySelector(selector).append(row);
-  }
-}
-
-for (const entry of earningsData.references) {
-  const row = element('tr');
-  const name = element('th', '', entry.label);
-  name.scope = 'row';
-  row.append(name);
-  for (const key of ['q1', 'median', 'q3']) row.append(element('td', 'text-end text-nowrap tabular-nums', money(entry[key])));
-  for (const key of ['observedCount', 'residualCount']) row.append(element('td', 'text-end tabular-nums', count(entry[key])));
-  row.append(element('td', 'text-end tabular-nums', employmentShare(entry)));
-  row.append(element('td', 'text-end tabular-nums', count(entry.totalSampleCount)));
-  root.querySelector('.reference-table tbody').append(row);
 }
 
 function drawTicks() {

@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare UNCG earnings by major with North Carolina and national high school graduate earnings.">
   <title>UNCG Earnings by Degree</title>
-  <link rel="stylesheet" href="styles.css?v=2">
-  <script src="data.js?v=2" defer></script>
-  <script src="chart.js?v=2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=3">
+  <script src="data.js?v=3" defer></script>
+  <script src="chart.js?v=3" defer></script>
 </head>
 <body>
 <main id="uncg-programs">
@@ -16,11 +16,13 @@
     <div class="meta text-small text-muted">
       <span>Annual earnings in 2023 dollars</span>
     </div>
+    <p class="text-small text-muted">Compare annual earnings across UNCG bachelor's programs five years after graduation, with high school graduates as a reference. Earnings ranges and medians cover people who meet each source's earnings rules. Percentages show the share above an earnings threshold.</p>
   </header>
   <section class="chart program-chart" aria-label="UNCG program earnings quartiles grouped by field, shared employment shares above the earnings cutoff, and high school references">
     <div class="chart-header">
       <div class="chart-legend text-small" role="group" aria-label="Chart marks">
-        <span><span class="text-nowrap" aria-hidden="true"><span class="swatch"></span><span class="swatch" style="background:var(--nc)"></span><span class="swatch" style="background:var(--us)"></span></span>Earnings range (middle 50%, height = graduates)</span>
+        <span><span class="swatch" aria-hidden="true"></span>UNCG earnings range (middle 50%; height = graduates)</span>
+        <span><span class="swatch" style="background:var(--high-school)" aria-hidden="true"></span>High school earnings range (fixed height)</span>
         <div class="extreme-legend tabular-nums" role="group" aria-label="Median and lowest and highest UNCG degree-program quartile edges" tabindex="0">
           <span><span><span class="median-key" aria-hidden="true"></span>Median</span></span>
           <span><span><span class="extreme-key floor" style="--edge-color:var(--red)" aria-hidden="true"></span>Low floor</span></span>
@@ -28,7 +30,7 @@
           <span><span><span class="extreme-key floor" style="--edge-color:var(--green)" aria-hidden="true"></span>High floor</span></span>
           <span><span><span class="extreme-key ceiling" style="--edge-color:var(--green)" aria-hidden="true"></span>High ceiling</span></span>
         </div>
-        <span><span class="swatch circle-swatch" aria-hidden="true"></span>Earnings median (pooled, low graduate count)</span>
+        <span><span class="swatch circle-swatch" aria-hidden="true"></span>UNCG Median earnings (pooled, few graduates)</span>
       </div>
       <div class="axis-row"><span class="axis-caption">Degree · CIP</span><div class="axis top-axis" aria-hidden="true"></div><span class="axis-caption share-caption">Employed above threshold</span></div>
     </div>
@@ -50,11 +52,11 @@
       <h2 id="pooled-median-key">Why some programs have circles</h2>
       <p>When Census does not publish an earnings range for a program's 2016–2018 graduates, a blue circle shows the median from several graduation groups combined. This is the pooled median: half of the qualifying graduates earned less and half earned more.</p>
       <p>These circles use 2001–2018 graduates, with earnings measured five years after graduation in 2006–2023 and adjusted to 2023 dollars. They cover a longer period than the boxes. Circle size is fixed and does not show how many graduates were counted.</p>
-      <p>Programs with no published median in either group remain in the data table but do not appear in the chart.</p>
+      <p>Programs with no published median in either group do not appear in the chart. Hover or focus a box, circle, or percentage to see its values and data source. Source data links are in the notes below.</p>
     </div>
     <div class="legend-item" role="group" aria-labelledby="high-school-key">
       <h2 id="high-school-key">Comparing with high school graduates</h2>
-      <p>Yellow boxes show North Carolina high school graduates; orange boxes show high school graduates across the U.S. Both use Census American Community Survey data from 2019–2023 for adults ages 25–34 whose highest education is a high school diploma or GED and who have not attended school in the past three months.</p>
+      <p>Yellow boxes show high school graduates in North Carolina and across the U.S. Row labels identify each group. Both use Census American Community Survey data from 2019–2023 for adults ages 25–34 whose highest education is a high school diploma or GED and who have not attended school in the past three months.</p>
       <p>The boxes show the middle 50% of annual wage-and-salary earnings among people earning at least $12,687.50 before adjustment for inflation. This cutoff equals 35 hours a week for 50 weeks at the $7.25 federal minimum wage. High school boxes have a fixed height; their height does not show a count.</p>
       <p>These groups cover different people and years than the UNCG data. The comparison does not measure how much earning a degree changes a person's income.</p>
     </div>
@@ -80,10 +82,12 @@
       </div>
     </div>
   </template>
-  <div class="text-small text-muted">UNCG sources: <a href="https://lehd.ces.census.gov/data/pseo/R2026Q2/nc/" target="_blank" rel="noopener noreferrer">Census PSEO R2026Q2 data</a> · <a href="https://lehd.ces.census.gov/data/pseo_documentation.html" target="_blank" rel="noopener noreferrer">Definitions</a> · <a href="https://catalog.uncg.edu/Archive/UGB_2017-2018.pdf#page=666" target="_blank" rel="noopener noreferrer">UNCG degree inventory</a></div>
-  <div class="text-small text-muted">High school estimates: <a href="https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" target="_blank" rel="noopener noreferrer">Census 2019–2023 ACS microdata</a> · <a href="https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/PUMS_Data_Dictionary_2019-2023.pdf" target="_blank" rel="noopener noreferrer">Definitions</a></div>
   <details>
-    <summary class="cursor-interaction">Notes on the data and boxes</summary>
+    <summary class="cursor-interaction">Notes and source data</summary>
+    <ul class="text-small">
+      <li>UNCG data: Census PSEO R2026Q2 <a href="https://lehd.ces.census.gov/data/pseo/R2026Q2/nc/pseoe_nc.csv.gz" target="_blank" rel="noopener noreferrer">program earnings</a> (main and pooled cohorts) and <a href="https://lehd.ces.census.gov/data/pseo/R2026Q2/nc/pseof_nc.csv.gz" target="_blank" rel="noopener noreferrer">field employment</a> · <a href="https://lehd.ces.census.gov/data/pseo_documentation.html" target="_blank" rel="noopener noreferrer">Definitions</a> · <a href="https://catalog.uncg.edu/Archive/UGB_2017-2018.pdf#page=666" target="_blank" rel="noopener noreferrer">UNCG degree inventory</a></li>
+      <li>High school data: <a href="https://www2.census.gov/programs-surveys/acs/data/pums/2023/5-Year/" target="_blank" rel="noopener noreferrer">Census 2019–2023 ACS public microdata</a> (NC and U.S.) · <a href="https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/PUMS_Data_Dictionary_2019-2023.pdf" target="_blank" rel="noopener noreferrer">Definitions</a></li>
+    </ul>
     <ul class="text-small data-group-notes"></ul>
     <ul class="text-small">
       <li>Box edges show the 25th and 75th earnings percentiles; the line shows the median among qualifying earners.</li>
@@ -103,36 +107,8 @@
       <li>High school earnings use wage-and-salary income (WAGP), excluding self-employment income. People with only self-employment income have zero wages and belong to the no/low wage earnings group. Eligibility uses WAGP before inflation adjustment; qualifying wages are then adjusted to 2023 dollars with ADJINC for the earnings quartiles. Percentiles use Census person weights (PWGTP): each is the first earnings value at which cumulative weight reaches 25%, 50%, or 75%. Values are rounded to the dollar. They are survey estimates; confidence intervals are not shown.</li>
       <li>The ACS share above the wage cutoff approximates PSEO’s earnings eligibility measure. ACS cannot identify earnings in each calendar quarter or reproduce PSEO's job coverage. It measures income over the prior 12 months rather than a calendar year. No quarterly or weeks-worked test is imposed. These sources describe different populations and periods and do not measure the causal effect of earning a UNCG degree.</li>
       <li>PSEO earnings use four-digit program groups, which may combine several degrees. Names list degree matches from the UNCG inventory; quartiles apply to the whole reporting group, not separately to each listed degree. Graduates with multiple degrees can appear more than once. Do not sum rows to obtain a campus total.</li>
-      <li>These historical outcomes do not predict an individual student's earnings or list every degree offered today. Tables include suppressed program groups; the chart omits groups without a published median.</li>
+      <li>These historical outcomes do not predict an individual student's earnings or list every degree offered today. The chart omits groups without a published median; the source data include suppressed groups.</li>
     </ul>
-  </details>
-  <details>
-    <summary class="cursor-interaction">Program data</summary>
-    <div class="table-responsive">
-      <table class="table table-sm program-table">
-        <thead><tr><th class="table-name" scope="col">UNCG degree or group</th><th scope="col" class="text-end">25th</th><th scope="col" class="text-end">Median</th><th scope="col" class="text-end">75th</th><th scope="col" class="text-end">Earnings sample</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </details>
-  <details>
-    <summary>Broad-field data</summary>
-    <div class="table-responsive">
-      <table class="field-table">
-        <thead><tr><th scope="col">UNCG broad field</th><th scope="col" class="text-end">25th</th><th scope="col" class="text-end">Median</th><th scope="col" class="text-end">75th</th><th scope="col" class="text-end">Earnings sample</th><th scope="col" class="text-end">Employed (flows)</th><th scope="col" class="text-end">No observed / marginal employment</th><th scope="col" class="text-end">Employed above threshold</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </details>
-  <details>
-    <summary>High school data</summary>
-    <p class="text-small">Population counts use survey weights; survey record counts are unweighted and include people below the cutoff.</p>
-    <div class="table-responsive">
-      <table class="reference-table">
-        <thead><tr><th scope="col">High school reference</th><th scope="col" class="text-end">25th</th><th scope="col" class="text-end">Median</th><th scope="col" class="text-end">75th</th><th scope="col" class="text-end">People at or above cutoff</th><th scope="col" class="text-end">People below cutoff</th><th scope="col" class="text-end">Employed above threshold</th><th scope="col" class="text-end">Survey records (all)</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
   </details>
   <noscript>Enable JavaScript to draw the chart and view program details.</noscript>
 </main>
