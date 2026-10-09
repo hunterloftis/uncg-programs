@@ -26,10 +26,8 @@
         <span><span class="swatch" style="background:var(--high-school)" aria-hidden="true"></span>High school earnings range (fixed height)</span>
         <div class="extreme-legend tabular-nums" role="group" aria-label="Median and lowest and highest UNCG degree-program quartile edges" tabindex="0">
           <span><span><span class="median-key" aria-hidden="true"></span>Median</span></span>
-          <span><span><span class="extreme-key floor" style="--edge-color:var(--red)" aria-hidden="true"></span>Low floor</span></span>
-          <span><span><span class="extreme-key ceiling" style="--edge-color:var(--red)" aria-hidden="true"></span>Low ceiling</span></span>
-          <span><span><span class="extreme-key floor" style="--edge-color:var(--green)" aria-hidden="true"></span>High floor</span></span>
-          <span><span><span class="extreme-key ceiling" style="--edge-color:var(--green)" aria-hidden="true"></span>High ceiling</span></span>
+          <span><span><span class="extreme-key" style="--edge-color:var(--red)" aria-hidden="true"></span>Minimum floor/ceiling</span></span>
+          <span><span><span class="extreme-key" style="--edge-color:var(--green)" aria-hidden="true"></span>Maximum floor/ceiling</span></span>
         </div>
         <span><span class="swatch circle-swatch" aria-hidden="true"></span>UNCG Median earnings (pooled, few graduates)</span>
       </div>
@@ -69,7 +67,7 @@
     <div class="legend-item">
       <h2>What the red and green marks mean</h2>
       <p>The floor is a box's left edge, or 25th percentile; the ceiling is its right edge, or 75th percentile. These edges mark the middle half of earnings, not the lowest and highest individual earnings.</p>
-      <p>Across the UNCG program boxes, red marks identify the lowest floor and lowest ceiling; green marks identify the highest floor and highest ceiling. Solid marks show floors and dashed marks show ceilings. High school boxes and pooled median circles are excluded from this comparison.</p>
+      <p>Across the UNCG program boxes, red marks identify the lowest floor and lowest ceiling; green marks identify the highest floor and highest ceiling. High school boxes and pooled median circles are excluded from this comparison.</p>
     </div>
   </section>
   <template id="tooltip-template">
@@ -92,7 +90,7 @@
     <ul class="text-small data-group-notes"></ul>
     <ul class="text-small">
       <li>Box edges show the 25th and 75th earnings percentiles; the line shows the median among qualifying earners.</li>
-      <li>Red marks show the lowest UNCG quartiles; green marks show the highest. Floor means the 25th percentile (solid line); ceiling means the 75th percentile (dashed line). These are not minimum or maximum individual earnings.</li>
+      <li>Red marks show the lowest UNCG quartiles; green marks show the highest. Floor means the 25th percentile; ceiling means the 75th percentile. These are not minimum or maximum individual earnings.</li>
       <li>Box height is proportional to the full earnings sample count. It is not the count within the middle 50%. Box area does not represent a count, and the fill does not imply an even income distribution.</li>
       <li>All UNCG boxes use the same count-to-height scale. High school survey samples cannot be compared as graduation-cohort counts.</li>
       <li>PSEO covers UNCG graduates, not just federal-aid recipients. Earnings come from covered jobs nationwide, including most state and local government jobs and some federal jobs. Coverage excludes unincorporated self-employment, military service, and some other work. Graduates may still be enrolled in school.</li>

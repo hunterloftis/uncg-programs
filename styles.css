@@ -39,7 +39,6 @@ a { color: var(--college); }
 .circle-swatch { width: 12px; height: 12px; border-radius: 50%; background: var(--college); }
 .circle-swatch, .median-fill { border: 2px solid var(--foreground); }
 .extreme-key { display: inline-block; height: 14px; border-left: 2px solid var(--edge-color); margin-right: 6px; vertical-align: middle; }
-.ceiling { border-left-style: dashed; }
 .chart { --label-width: min(280px, 38%); --share-column-width: 90px; margin: 32px 0; font-size: 12px; }
 .chart-group, .axis-row { display: grid; grid-template-columns: var(--label-width) minmax(0, 1fr) var(--share-column-width); }
 .chart-header { position: sticky; top: 0; z-index: 4; background: var(--background); }
@@ -69,7 +68,7 @@ a { color: var(--college); }
 .median { position: absolute; top: 50%; height: max(6px, var(--box-height)); border-left: 3px solid var(--foreground); transform: translateY(-50%); pointer-events: none; }
 .extreme-line { position: absolute; top: 50%; height: max(10px, var(--box-height)); border-left: 4px solid var(--edge-color); transform: translateY(-50%); pointer-events: none; }
 .floor { left: 0; }
-.extreme-line.ceiling { right: 0; border-left-style: dashed; }
+.extreme-line.ceiling { right: 0; }
 .axis { position: relative; height: 32px; }
 .tick { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 .top-axis .tick { bottom: 8px; }
