@@ -10,7 +10,6 @@ const plottedMedian = entry => entry.median ?? entry.fallback?.median ?? null;
 const byMedian = (a, b) => (plottedMedian(a) ?? Infinity) - (plottedMedian(b) ?? Infinity) || a.label.localeCompare(b.label);
 const programs = earningsData.programs.filter(hasBox);
 const fallbackPrograms = earningsData.programs.filter(entry => entry.fallback);
-const omittedPrograms = earningsData.programs.filter(entry => plottedMedian(entry) === null);
 const displayedPrograms = [...programs, ...fallbackPrograms];
 const groups = [
   ...earningsData.references.map(entry => ({ field: entry, entries: [entry] })),
@@ -162,13 +161,12 @@ for (const { field, entries } of groups) {
   root.querySelector('.chart-rows').append(group);
 }
 
-root.querySelector('.program-summary').textContent = `${programs.length} UNCG program boxes · ${fallbackPrograms.length} pooled-cohort median circles · ${earningsData.references.length} high school boxes · ${omittedPrograms.length} unavailable program groups omitted`;
+root.querySelector('.program-summary').textContent = `${programs.length} UNCG program boxes · ${fallbackPrograms.length} pooled-cohort median circles · ${earningsData.references.length} high school boxes`;
 
 const programNames = entries => entries.map(entry => `${entry.label} (CIP ${entry.cip})`).join('; ');
 for (const [label, description] of [
   ['Main data:', `${programs.length} UNCG program groups use PSEO quartiles for ${earningsData.cohort} graduates, measured at year five in ${earningsData.earningsYears}. Boxes use this cohort only.`],
-  ['Pooled data:', `${fallbackPrograms.length} groups use PSEO's published median across all available five-year cohorts (2001–2018 graduates; 2006–2023 earnings, adjusted to 2023 dollars). Blue circles have fixed size; their area does not represent a count. The employment rules and nationwide coverage match the main PSEO data, but the periods differ. ${programNames(fallbackPrograms)}.`],
-  ['Unavailable data:', `${omittedPrograms.length} groups have no published five-year median in either PSEO cohort selection and are omitted from the chart: ${programNames(omittedPrograms)}.`]
+  ['Pooled data:', `${fallbackPrograms.length} groups use PSEO's published median across all available five-year cohorts (2001–2018 graduates; 2006–2023 earnings, adjusted to 2023 dollars). Blue circles have fixed size; their area does not represent a count. The employment rules and nationwide coverage match the main PSEO data, but the periods differ. ${programNames(fallbackPrograms)}.`]
 ]) {
   const note = element('li');
   note.append(element('strong', '', `${label} `), description);
